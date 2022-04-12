@@ -3,9 +3,9 @@ import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { styled } from '@mui/system';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import { CategoryAnother, ICategory } from 'models/ICategory';
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
-    changeActualCategory,
+    changeActualCategories,
     changeCategoryForTransactions,
     deleteCategory,
 } from 'store/reducers/ActionCreators';
@@ -28,15 +28,13 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
 }) => {
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
-    const { categories, actualCategory } = useAppSelector(categorySelector);
+    const { categories, actualCategories } = useAppSelector(categorySelector);
 
     const handleChange = (
         event: React.MouseEvent<HTMLElement>,
-        nextView: number
+        newCategories: number[]
     ) => {
-        let idActualCategory = nextView;
-        if (!idActualCategory) idActualCategory = CategoryAnother.id;
-        dispatch(changeActualCategory(idActualCategory));
+        dispatch(changeActualCategories(newCategories));
         closeNavMenu();
     };
 
@@ -47,44 +45,36 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
         }
     };
 
-    useEffect(() => {
-        if (
-            categories.findIndex(
-                (category: ICategory) => category.id == actualCategory
-            ) == -1
-        )
-            dispatch(changeActualCategory(CategoryAnother.id));
-    }, [actualCategory, categories, dispatch]);
-
     return (
-        <StatToggleButtonGroup
-            orientation="vertical"
-            value={actualCategory}
-            exclusive
-            onChange={handleChange}
-        >
-            {categories.map((category: ICategory) => (
-                <ToggleButton key={category.id} value={category.id}>
-                    {category.label}
-                    {isDeleteCategory && (
-                        <div>
-                            <FormEditCategory
-                                id={category.id}
-                                name={category.label}
-                            />
-                            <DeleteIcon
-                                onClick={() =>
-                                    clickDeleteCategory(category.id, idUser)
-                                }
-                            />
-                        </div>
-                    )}
+        <>
+            <StatToggleButtonGroup
+                orientation="vertical"
+                value={actualCategories}
+                onChange={handleChange}
+            >
+                {categories.map((category: ICategory) => (
+                    <ToggleButton key={category.id} value={category.id}>
+                        {category.label}
+                        {isDeleteCategory && (
+                            <div>
+                                <FormEditCategory
+                                    id={category.id}
+                                    name={category.label}
+                                />
+                                <DeleteIcon
+                                    onClick={() =>
+                                        clickDeleteCategory(category.id, idUser)
+                                    }
+                                />
+                            </div>
+                        )}
+                    </ToggleButton>
+                ))}
+                <ToggleButton value={CategoryAnother.id}>
+                    {CategoryAnother.label}
                 </ToggleButton>
-            ))}
-            <ToggleButton value={CategoryAnother.id}>
-                {CategoryAnother.label}
-            </ToggleButton>
-        </StatToggleButtonGroup>
+            </StatToggleButtonGroup>
+        </>
     );
 };
 

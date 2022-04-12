@@ -77,9 +77,15 @@ export const initializationCategories =
                 JSON.stringify(masCategories)
             );
         }
+        const masActualCategories: number[] = masCategories.map(
+            (category: ICategory) => category.id
+        );
         dispatch(categorySlice.actions.initialCategory(masCategories));
         dispatch(
-            categorySlice.actions.changeActualCategory(CategoryAnother.id)
+            categorySlice.actions.changeActualCategories([
+                ...masActualCategories,
+                CategoryAnother.id,
+            ])
         );
     };
 
@@ -148,9 +154,10 @@ export const deleteCategory =
         dispatch(categorySlice.actions.initialCategory(masCategories));
     };
 
-export const changeActualCategory = (id: number) => (dispatch: AppDispatch) => {
-    dispatch(categorySlice.actions.changeActualCategory(id));
-};
+export const changeActualCategories =
+    (masId: number[]) => (dispatch: AppDispatch) => {
+        dispatch(categorySlice.actions.changeActualCategories(masId));
+    };
 
 //actions with transactionSlice
 export const initializationTransactions =

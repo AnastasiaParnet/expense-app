@@ -26,10 +26,12 @@ const DivChart = styled('div')({
 
 const Chart: React.FC = () => {
     const { transactions } = useAppSelector(transactionSelector);
-    const { actualCategory } = useAppSelector(categorySelector);
+    const { actualCategories } = useAppSelector(categorySelector);
 
     const dataForGraphic: IDataForGraphic[] = transactions
-        .filter((tran: ITransaction) => tran.id_category === actualCategory)
+        .filter((tran: ITransaction) =>
+            actualCategories.includes(tran.id_category)
+        )
         .reduce((mas: IDataForGraphic[], transaction: ITransaction) => {
             const indexLastData = mas.length - 1;
             let amount = transaction.amount;

@@ -8,12 +8,12 @@ import { RootState } from 'store/store';
 
 interface CategoryState {
     categories: ICategory[];
-    actualCategory: number;
+    actualCategories: number[];
 }
 
 const initialState: CategoryState = {
     categories: [],
-    actualCategory: -1,
+    actualCategories: [],
 };
 
 export const categorySlice = createSlice({
@@ -26,12 +26,12 @@ export const categorySlice = createSlice({
         addCategory(state, action: PayloadAction<ICategory>) {
             state.categories = [...state.categories, action.payload];
         },
-        changeActualCategory(state, action: PayloadAction<number>) {
-            state.actualCategory = action.payload;
+        changeActualCategories(state, action: PayloadAction<number[]>) {
+            state.actualCategories = action.payload;
         },
         clearCategory(state) {
             state.categories = [];
-            state.actualCategory = -1;
+            state.actualCategories = [];
         },
     },
 });

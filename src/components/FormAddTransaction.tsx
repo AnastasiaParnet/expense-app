@@ -11,7 +11,6 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { addTransaction } from 'store/reducers/ActionCreators';
 import { authSelector } from 'store/reducers/AuthSlice';
-import { categorySelector } from 'store/reducers/CategorySlice';
 import { transactionSelector } from 'store/reducers/TransactionSlice';
 import * as yup from 'yup';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
@@ -30,7 +29,6 @@ const FormAddTransaction: React.FC = () => {
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
     const { transactions } = useAppSelector(transactionSelector);
-    const { actualCategory } = useAppSelector(categorySelector);
     const [open, setOpen] = useState<boolean>(false);
 
     const {
@@ -65,7 +63,7 @@ const FormAddTransaction: React.FC = () => {
                 label: data.label,
                 date: dateNowString,
                 amount: data.amount,
-                id_category: actualCategory,
+                id_category: 0,
             };
             const dataForAdd = {
                 idUser,
@@ -75,56 +73,50 @@ const FormAddTransaction: React.FC = () => {
         }
     };
 
-    if (actualCategory !== null) {
-        return (
-            <div>
-                <Button variant="outlined" onClick={handleClickOpen}>
-                    Додати транзакцію
-                </Button>
-                <Dialog open={open} onClose={handleClose}>
-                    <form>
-                        <DialogTitle>Нова транзакція</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText>
-                                Зверніть увагу. Відємне значення транзакції є
-                                витратою, додатнє - доходом.
-                            </DialogContentText>
-                            <TextField
-                                fullWidth
-                                label="Назва транзакції"
-                                variant="standard"
-                                {...register('label')}
-                                error={errors?.label ? true : false}
-                                helperText={
-                                    errors?.label
-                                        ? errors.label.message || 'Error!!!'
-                                        : ''
-                                }
-                            />
-                            <TextField
-                                fullWidth
-                                label="Сума транзакції"
-                                variant="standard"
-                                {...register('amount')}
-                                error={errors?.amount ? true : false}
-                                helperText={
-                                    errors?.amount ? 'Введіть число' : ''
-                                }
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleSubmit(clickAddTransaction)}>
-                                Додати
-                            </Button>
-                            <Button onClick={handleClose}>Відмінити</Button>
-                        </DialogActions>
-                    </form>
-                </Dialog>
-            </div>
-        );
-    } else {
-        return <div></div>;
-    }
+    return (
+        <div>
+            <Button variant="outlined" onClick={handleClickOpen}>
+                Додати транзакцію
+            </Button>
+            <Dialog open={open} onClose={handleClose}>
+                <form>
+                    <DialogTitle>Нова транзакція</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Зверніть увагу. Відємне значення транзакції є
+                            витратою, додатнє - доходом.
+                        </DialogContentText>
+                        <TextField
+                            fullWidth
+                            label="Назва транзакції"
+                            variant="standard"
+                            {...register('label')}
+                            error={errors?.label ? true : false}
+                            helperText={
+                                errors?.label
+                                    ? errors.label.message || 'Error!!!'
+                                    : ''
+                            }
+                        />
+                        <TextField
+                            fullWidth
+                            label="Сума транзакції"
+                            variant="standard"
+                            {...register('amount')}
+                            error={errors?.amount ? true : false}
+                            helperText={errors?.amount ? 'Введіть число' : ''}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleSubmit(clickAddTransaction)}>
+                            Додати
+                        </Button>
+                        <Button onClick={handleClose}>Відмінити</Button>
+                    </DialogActions>
+                </form>
+            </Dialog>
+        </div>
+    );
 };
 
 export default FormAddTransaction;

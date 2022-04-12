@@ -15,7 +15,18 @@ const BoxMain = styled(Box)(({ theme }) => ({
     },
     [theme.breakpoints.up('md')]: {
         flexDirection: 'row',
+        margin: '0 5%',
     },
+}));
+
+const BoxCategories = styled(Box)({
+    margin: '0 50px 0 0',
+});
+
+const Header = styled('h1')(({ theme }) => ({
+    color: theme.palette.text.secondary,
+    fontFamily: 'Arial, Helvetica, sans-serif',
+    margin: 0,
 }));
 
 const BoxTransactions = styled(Box)(({ theme }) => ({
@@ -31,16 +42,24 @@ const BoxTransactions = styled(Box)(({ theme }) => ({
     },
 }));
 
+const DivTransactions = styled('div')({
+    display: 'flex',
+    justifyContent: 'space-between',
+});
+
 const Main: React.FC = () => {
     return (
         <BoxMain>
-            <Box>
+            <BoxCategories>
                 <ListCategories isDeleteCategory={true} />
                 <FormAddCategory />
-            </Box>
+            </BoxCategories>
             <BoxTransactions>
+                <DivTransactions>
+                    <Header>Список транзакцій</Header>
+                    <FormAddTransaction />
+                </DivTransactions>
                 <ListTransactions />
-                <FormAddTransaction />
             </BoxTransactions>
         </BoxMain>
     );

@@ -11,7 +11,7 @@ interface ItemTransactionProps {
 
 const Item = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
-    margin: '10px 10% 10px 0px',
+    margin: '10px 0',
     padding: theme.spacing(1),
     textAlign: 'left',
     color: theme.palette.text.secondary,
@@ -41,7 +41,7 @@ const ItemTransaction: React.FC<ItemTransactionProps> = ({
         <Item>
             <DivItem>
                 <Label>{label}</Label>
-                <span>{category}</span>
+                <span>{category.toUpperCase()}</span>
             </DivItem>
             <DivItem>
                 <Amount>{amount}</Amount>

@@ -1,4 +1,4 @@
-import { Box, Button, Container, Menu } from '@mui/material';
+import { Box, Button, Menu } from '@mui/material';
 import { styled } from '@mui/system';
 import React, { useState } from 'react';
 import ButtonGroupCategories from './ButtonGroupCategories';
@@ -55,7 +55,7 @@ const ListCategories: React.FC<ListCategoriesProps> = ({
     };
 
     return (
-        <Container>
+        <Box>
             <SmallBox>
                 <Button variant="outlined" onClick={handleOpenNavMenu}>
                     Категорії
@@ -78,7 +78,7 @@ const ListCategories: React.FC<ListCategoriesProps> = ({
                     closeNavMenu={handleCloseNavMenu}
                 />
             </BigBox>
-        </Container>
+        </Box>
     );
 };
 
