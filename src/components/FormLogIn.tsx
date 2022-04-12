@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, TextField } from '@mui/material';
+import { styled } from '@mui/system';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -14,6 +15,20 @@ interface InterfaceLogIn {
     password: string;
 }
 
+const Form = styled('form')({
+    display: 'inline-block',
+    padding: '25px',
+    border: '1px solid rgb(52, 35, 42)',
+    whiteSpace: 'normal',
+    verticalAlign: 'middle',
+    textAlign: 'left',
+});
+
+const DivInput = styled('div')({
+    padding: '5%',
+    textAlign: 'center',
+});
+
 const validationSchema = yup.object({
     username: yup.string().required("Введіть ім'я користувача"),
     password: yup.string().min(4).max(16).required('Введіть пароль'),
@@ -27,7 +42,6 @@ const FormLogIn: React.FC = () => {
         register,
         handleSubmit,
         formState: { errors },
-        getValues,
     } = useForm<InterfaceLogIn>({
         mode: 'onChange',
         resolver: yupResolver(validationSchema),
@@ -42,8 +56,8 @@ const FormLogIn: React.FC = () => {
     };
 
     return (
-        <form className="login_form">
-            <div className="login_form_input">
+        <Form>
+            <DivInput>
                 <TextField
                     label="Ім'я користувача"
                     variant="filled"
@@ -55,8 +69,8 @@ const FormLogIn: React.FC = () => {
                             : ''
                     }
                 />
-            </div>
-            <div className="login_form_input">
+            </DivInput>
+            <DivInput>
                 <TextField
                     label="Пароль"
                     type="password"
@@ -69,13 +83,13 @@ const FormLogIn: React.FC = () => {
                             : ''
                     }
                 />
-            </div>
-            <div className="login_form_input">
+            </DivInput>
+            <DivInput>
                 <Button variant="text" onClick={handleSubmit(submitForm)}>
                     Ввійти
                 </Button>
-            </div>
-        </form>
+            </DivInput>
+        </Form>
     );
 };
 

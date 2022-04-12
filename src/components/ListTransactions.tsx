@@ -33,6 +33,7 @@ const ListTransactions: React.FC = () => {
                         return (
                             <ItemTransaction
                                 label={tran.label}
+                                category="Name"
                                 date={tran.date}
                                 amount={tran.amount}
                                 key={tran.id}

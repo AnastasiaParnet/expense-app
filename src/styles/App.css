@@ -7,29 +7,3 @@ a {
     text-decoration: none;
     color: rgb(52, 35, 42);
 }
-
-.login {
-    position: fixed;
-    top: 25%;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    overflow: auto;
-    white-space: nowrap;
-    text-align: center;
-    font-size: 0;
-}
-
-.login_form {
-    display: inline-block;
-    padding: 25px;
-    border: 1px solid rgb(52, 35, 42);
-    white-space: normal;
-    vertical-align: middle;
-    text-align: left;
-}
-
-.login_form_input {
-    padding: 5%;
-    text-align: center;
-}

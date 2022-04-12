@@ -1,4 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { styled } from '@mui/system';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
@@ -66,11 +67,14 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                 <ToggleButton key={category.id} value={category.id}>
                     {category.label}
                     {isDeleteCategory && (
-                        <DeleteIcon
-                            onClick={() =>
-                                clickDeleteCategory(category.id, idUser)
-                            }
-                        />
+                        <div>
+                            <EditIcon />
+                            <DeleteIcon
+                                onClick={() =>
+                                    clickDeleteCategory(category.id, idUser)
+                                }
+                            />
+                        </div>
                     )}
                 </ToggleButton>
             ))}

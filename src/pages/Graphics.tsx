@@ -4,7 +4,7 @@ import Chart from 'components/Chart';
 import ListCategories from 'components/ListCategories';
 import React from 'react';
 
-const MainBox = styled(Box)(({ theme }) => ({
+const BoxMain = styled(Box)(({ theme }) => ({
     display: 'flex',
     padding: '3%',
     justifyContent: 'center',
@@ -35,14 +35,14 @@ const BoxChart = styled(Box)(({ theme }) => ({
 
 const Graphics: React.FC = () => {
     return (
-        <MainBox>
+        <BoxMain>
             <Box>
                 <ListCategories isDeleteCategory={false} />
             </Box>
             <BoxChart>
                 <Chart />
             </BoxChart>
-        </MainBox>
+        </BoxMain>
     );
 };
 
