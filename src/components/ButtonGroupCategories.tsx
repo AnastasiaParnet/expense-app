@@ -1,5 +1,4 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { styled } from '@mui/system';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
@@ -12,6 +11,7 @@ import {
 } from 'store/reducers/ActionCreators';
 import { authSelector } from 'store/reducers/AuthSlice';
 import { categorySelector } from 'store/reducers/CategorySlice';
+import FormEditCategory from './FormEditCategory';
 
 interface ButtonGroupCategoriesProps {
     isDeleteCategory: boolean;
@@ -68,7 +68,10 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                     {category.label}
                     {isDeleteCategory && (
                         <div>
-                            <EditIcon />
+                            <FormEditCategory
+                                id={category.id}
+                                name={category.label}
+                            />
                             <DeleteIcon
                                 onClick={() =>
                                     clickDeleteCategory(category.id, idUser)

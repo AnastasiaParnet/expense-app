@@ -99,6 +99,37 @@ export const addCategory =
         dispatch(categorySlice.actions.addCategory(newCategory));
     };
 
+export const changeNameCategory =
+    ({
+        idUser,
+        idCategory,
+        newLabel,
+    }: {
+        idUser: number;
+        idCategory: number;
+        newLabel: string;
+    }) =>
+    (dispatch: AppDispatch) => {
+        let masCategories: ICategory[] = [];
+        const localCategories = localStorage.getItem(`categories_${idUser}`);
+        if (localCategories) {
+            masCategories = JSON.parse(localCategories);
+        }
+        masCategories = masCategories.map((category: ICategory) => {
+            if (category.id === idCategory)
+                return {
+                    id: category.id,
+                    label: newLabel,
+                };
+            return category;
+        });
+        localStorage.setItem(
+            `categories_${idUser}`,
+            JSON.stringify(masCategories)
+        );
+        dispatch(categorySlice.actions.initialCategory(masCategories));
+    };
+
 export const deleteCategory =
     ({ idUser, idCategory }: { idUser: number; idCategory: number }) =>
     (dispatch: AppDispatch) => {
@@ -184,6 +215,7 @@ export const changeCategoryForTransactions =
         dispatch(transactionSlice.actions.initialTransaction(masTransactions));
     };
 
+//actions with all slices
 export const clearAll = () => (dispatch: AppDispatch) => {
     dispatch(authSlice.actions.clearUser());
     dispatch(categorySlice.actions.clearCategory());
