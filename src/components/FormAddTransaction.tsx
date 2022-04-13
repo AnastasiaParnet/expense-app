@@ -1,4 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import {
+    FormControl,
+    FormHelperText,
+    InputLabel,
+    MenuItem,
+    Select,
+} from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -6,29 +13,34 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
+import { useAppDispatch, useAppSelector } from 'hooks/redux';
+import { CategoryAnother, ICategory } from 'models/ICategory';
 import { ITransaction } from 'models/ITransaction';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { addTransaction } from 'store/reducers/ActionCreators';
 import { authSelector } from 'store/reducers/AuthSlice';
+import { categorySelector } from 'store/reducers/CategorySlice';
 import { transactionSelector } from 'store/reducers/TransactionSlice';
 import * as yup from 'yup';
-import { useAppDispatch, useAppSelector } from '../hooks/redux';
 
 interface InterfaceAddTransaction {
     label: string;
     amount: number;
+    category: number;
 }
 
 const validationSchema = yup.object({
     label: yup.string().required('Введіть назву транзакції'),
     amount: yup.number().integer('number').required('Введіть суму'),
+    category: yup.number().required('Оберіть категорію'),
 });
 
 const FormAddTransaction: React.FC = () => {
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
     const { transactions } = useAppSelector(transactionSelector);
+    const { categories } = useAppSelector(categorySelector);
     const [open, setOpen] = useState<boolean>(false);
 
     const {
@@ -49,9 +61,15 @@ const FormAddTransaction: React.FC = () => {
         setOpen(false);
     };
 
+    const handleCancel = () => {
+        reset();
+        handleClose();
+    };
+
     const clickAddTransaction = (data: InterfaceAddTransaction) => {
         reset();
         setOpen(false);
+        console.log(data);
         if (idUser) {
             const dateNowString = new Date().toLocaleString('ukr', {
                 day: 'numeric',
@@ -63,7 +81,7 @@ const FormAddTransaction: React.FC = () => {
                 label: data.label,
                 date: dateNowString,
                 amount: data.amount,
-                id_category: 0,
+                id_category: data.category,
             };
             const dataForAdd = {
                 idUser,
@@ -106,12 +124,44 @@ const FormAddTransaction: React.FC = () => {
                             error={errors?.amount ? true : false}
                             helperText={errors?.amount ? 'Введіть число' : ''}
                         />
+                        <FormControl
+                            variant="standard"
+                            fullWidth
+                            error={errors?.category ? true : false}
+                        >
+                            <InputLabel id="category">
+                                Назва категорії
+                            </InputLabel>
+                            <Select
+                                labelId="category"
+                                id="demo-simple-select-standard"
+                                defaultValue={CategoryAnother.id}
+                                {...register('category')}
+                            >
+                                {categories.map((category: ICategory) => (
+                                    <MenuItem
+                                        key={category.id}
+                                        value={category.id}
+                                    >
+                                        {category.label}
+                                    </MenuItem>
+                                ))}
+                                <MenuItem value={CategoryAnother.id}>
+                                    <em>{CategoryAnother.label}</em>
+                                </MenuItem>
+                            </Select>
+                            {errors.category && (
+                                <FormHelperText>
+                                    Оберіть категорію
+                                </FormHelperText>
+                            )}
+                        </FormControl>
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleSubmit(clickAddTransaction)}>
                             Додати
                         </Button>
-                        <Button onClick={handleClose}>Відмінити</Button>
+                        <Button onClick={handleCancel}>Відмінити</Button>
                     </DialogActions>
                 </form>
             </Dialog>

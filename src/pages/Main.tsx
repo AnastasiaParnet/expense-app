@@ -42,10 +42,16 @@ const BoxTransactions = styled(Box)(({ theme }) => ({
     },
 }));
 
-const DivTransactions = styled('div')({
+const DivTransactions = styled('div')(({ theme }) => ({
     display: 'flex',
     justifyContent: 'space-between',
-});
+    [theme.breakpoints.up('xs')]: {
+        flexDirection: 'column',
+    },
+    [theme.breakpoints.up('md')]: {
+        flexDirection: 'row',
+    },
+}));
 
 const Main: React.FC = () => {
     return (
