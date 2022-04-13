@@ -19,9 +19,14 @@ const BoxMain = styled(Box)(({ theme }) => ({
     },
 }));
 
-const BoxCategories = styled(Box)({
-    margin: '0 50px 0 0',
-});
+const BoxCategories = styled(Box)(({ theme }) => ({
+    [theme.breakpoints.up('xs')]: {
+        margin: '5px 10px 20px 10px',
+    },
+    [theme.breakpoints.up('md')]: {
+        margin: '0 50px 0 0',
+    },
+}));
 
 const Header = styled('h1')(({ theme }) => ({
     color: theme.palette.text.secondary,
@@ -45,12 +50,7 @@ const BoxTransactions = styled(Box)(({ theme }) => ({
 const DivTransactions = styled('div')(({ theme }) => ({
     display: 'flex',
     justifyContent: 'space-between',
-    [theme.breakpoints.up('xs')]: {
-        flexDirection: 'column',
-    },
-    [theme.breakpoints.up('md')]: {
-        flexDirection: 'row',
-    },
+    flexDirection: 'row',
 }));
 
 const Main: React.FC = () => {

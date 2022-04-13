@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import styled from '@mui/system/styled';
 import { useAppDispatch } from 'hooks/redux';
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { GRAPHICS_SCREEN, LOGIN_PATH, MAIN_SCREEN } from 'routes';
 import { clearAll } from 'store/reducers/ActionCreators';
 
@@ -79,6 +79,17 @@ const StatMenu = styled(Menu)(({ theme }) => ({
     },
 }));
 
+const StatLink = styled(Link)({
+    textDecoration: 'none',
+    color: 'rgb(52, 35, 42)',
+});
+
+const ActiveLink = styled(Link)({
+    textDecoration: 'none',
+    fontWeight: '600',
+    color: 'rgb(52, 35, 42)',
+});
+
 const pages = [
     { name: 'Головна сторінка', link: MAIN_SCREEN },
     { name: 'Статистика', link: GRAPHICS_SCREEN },
@@ -87,6 +98,7 @@ const pages = [
 const Navbar: React.FC<NavbarProps> = ({ isAuth }) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -160,7 +172,20 @@ const Navbar: React.FC<NavbarProps> = ({ isAuth }) => {
                                     onClick={handleCloseNavMenu}
                                 >
                                     <Typography textAlign="center">
-                                        <Link to={page.link}>{page.name}</Link>
+                                        {console.log(
+                                            location.pathname,
+                                            page.link,
+                                            location.pathname == page.link
+                                        )}
+                                        {location.pathname == page.link ? (
+                                            <ActiveLink to={page.link}>
+                                                {page.name}
+                                            </ActiveLink>
+                                        ) : (
+                                            <StatLink to={page.link}>
+                                                {page.name}
+                                            </StatLink>
+                                        )}
                                     </Typography>
                                 </MenuItem>
                             ))}
@@ -175,7 +200,15 @@ const Navbar: React.FC<NavbarProps> = ({ isAuth }) => {
                                 key={page.link}
                                 onClick={handleCloseNavMenu}
                             >
-                                <Link to={page.link}>{page.name}</Link>
+                                {location.pathname == page.link ? (
+                                    <ActiveLink to={page.link}>
+                                        {page.name}
+                                    </ActiveLink>
+                                ) : (
+                                    <StatLink to={page.link}>
+                                        {page.name}
+                                    </StatLink>
+                                )}
                             </BigButton>
                         ))}
                     </BigBox>

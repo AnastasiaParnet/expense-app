@@ -1,11 +1,23 @@
-import { Box, Button, Menu } from '@mui/material';
+import { Box, Menu, ToggleButton } from '@mui/material';
 import { styled } from '@mui/system';
+import ButtonAllCategories from 'components/ButtonAllCategories';
+import ButtonGroupCategories from 'components/ButtonGroupCategories';
 import React, { useState } from 'react';
-import ButtonGroupCategories from './ButtonGroupCategories';
 
 interface ListCategoriesProps {
     isDeleteCategory: boolean;
 }
+
+const StatDiv = styled('div')(({ theme }) => ({
+    display: 'flex',
+    [theme.breakpoints.up('xs')]: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    [theme.breakpoints.up('md')]: {
+        flexDirection: 'column',
+    },
+}));
 
 const BigBox = styled(Box)(({ theme }) => ({
     flexGrow: 1,
@@ -28,6 +40,10 @@ const SmallBox = styled(Box)(({ theme }) => ({
         display: 'none',
     },
 }));
+
+const StatToggleButton = styled(ToggleButton)({
+    width: '150px',
+});
 
 const StatMenu = styled(Menu)(({ theme }) => ({
     [theme.breakpoints.up('xs')]: {
@@ -55,30 +71,33 @@ const ListCategories: React.FC<ListCategoriesProps> = ({
     };
 
     return (
-        <Box>
-            <SmallBox>
-                <Button variant="outlined" onClick={handleOpenNavMenu}>
-                    Категорії
-                </Button>
-                <StatMenu
-                    id="menu-appbar"
-                    anchorEl={anchorElNav}
-                    open={Boolean(anchorElNav)}
-                    onClose={handleCloseNavMenu}
-                >
+        <StatDiv>
+            <ButtonAllCategories />
+            <Box>
+                <SmallBox>
+                    <StatToggleButton value="" onClick={handleOpenNavMenu}>
+                        Категорії
+                    </StatToggleButton>
+                    <StatMenu
+                        id="menu-appbar"
+                        anchorEl={anchorElNav}
+                        open={Boolean(anchorElNav)}
+                        onClose={handleCloseNavMenu}
+                    >
+                        <ButtonGroupCategories
+                            isDeleteCategory={isDeleteCategory}
+                            closeNavMenu={handleCloseNavMenu}
+                        />
+                    </StatMenu>
+                </SmallBox>
+                <BigBox>
                     <ButtonGroupCategories
                         isDeleteCategory={isDeleteCategory}
                         closeNavMenu={handleCloseNavMenu}
                     />
-                </StatMenu>
-            </SmallBox>
-            <BigBox>
-                <ButtonGroupCategories
-                    isDeleteCategory={isDeleteCategory}
-                    closeNavMenu={handleCloseNavMenu}
-                />
-            </BigBox>
-        </Box>
+                </BigBox>
+            </Box>
+        </StatDiv>
     );
 };
 
