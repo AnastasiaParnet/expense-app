@@ -43,6 +43,7 @@ const SmallTypography = styled(Typography)(({ theme }) => ({
 
 const BigBox = styled(Box)(({ theme }) => ({
     flexGrow: 1,
+    margin: '0 20px',
     [theme.breakpoints.up('xs')]: {
         display: 'none',
     },
@@ -172,11 +173,6 @@ const Navbar: React.FC<NavbarProps> = ({ isAuth }) => {
                                     onClick={handleCloseNavMenu}
                                 >
                                     <Typography textAlign="center">
-                                        {console.log(
-                                            location.pathname,
-                                            page.link,
-                                            location.pathname == page.link
-                                        )}
                                         {location.pathname == page.link ? (
                                             <ActiveLink to={page.link}>
                                                 {page.name}

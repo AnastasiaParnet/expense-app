@@ -7,30 +7,26 @@ import React from 'react';
 const BoxMain = styled(Box)(({ theme }) => ({
     display: 'flex',
     padding: '3%',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     [theme.breakpoints.up('xs')]: {
         flexDirection: 'column',
     },
     [theme.breakpoints.up('md')]: {
         flexDirection: 'row',
+        margin: '0 0 0 5%',
+    },
+    [theme.breakpoints.up('lg')]: {
+        margin: '0 10%',
+    },
+    [theme.breakpoints.up('xl')]: {
+        margin: '0 15%',
     },
 }));
 
 const BoxChart = styled(Box)(({ theme }) => ({
     height: '100%',
     margin: '10px',
-    [theme.breakpoints.up('sm')]: {
-        width: '100%',
-    },
-    [theme.breakpoints.up('md')]: {
-        width: '80%',
-    },
-    [theme.breakpoints.up('lg')]: {
-        width: '60%',
-    },
-    [theme.breakpoints.up('xl')]: {
-        width: '50%',
-    },
+    width: '100%',
 }));
 
 const Graphics: React.FC = () => {

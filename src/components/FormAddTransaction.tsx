@@ -21,25 +21,24 @@ import { useForm } from 'react-hook-form';
 import { addTransaction } from 'store/reducers/ActionCreators';
 import { authSelector } from 'store/reducers/AuthSlice';
 import { categorySelector } from 'store/reducers/CategorySlice';
-import { transactionSelector } from 'store/reducers/TransactionSlice';
+import { v4 as uuidv4 } from 'uuid';
 import * as yup from 'yup';
 
 interface InterfaceAddTransaction {
     label: string;
     amount: number;
-    category: number;
+    category: string;
 }
 
 const validationSchema = yup.object({
     label: yup.string().required('Введіть назву транзакції'),
     amount: yup.number().integer('number').required('Введіть суму'),
-    category: yup.number().required('Оберіть категорію'),
+    category: yup.string().required('Оберіть категорію'),
 });
 
 const FormAddTransaction: React.FC = () => {
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
-    const { transactions } = useAppSelector(transactionSelector);
     const { categories } = useAppSelector(categorySelector);
     const [open, setOpen] = useState<boolean>(false);
 
@@ -69,7 +68,6 @@ const FormAddTransaction: React.FC = () => {
     const clickAddTransaction = (data: InterfaceAddTransaction) => {
         reset();
         setOpen(false);
-        console.log(data);
         if (idUser) {
             const dateNowString = new Date().toLocaleString('ukr', {
                 day: 'numeric',
@@ -77,7 +75,7 @@ const FormAddTransaction: React.FC = () => {
                 year: 'numeric',
             });
             const newTransaction: ITransaction = {
-                id: transactions.length + 1,
+                id: uuidv4(),
                 label: data.label,
                 date: dateNowString,
                 amount: data.amount,
@@ -143,11 +141,13 @@ const FormAddTransaction: React.FC = () => {
                                         key={category.id}
                                         value={category.id}
                                     >
-                                        {category.label}
+                                        {category.label.toUpperCase()}
                                     </MenuItem>
                                 ))}
                                 <MenuItem value={CategoryAnother.id}>
-                                    <em>{CategoryAnother.label}</em>
+                                    <em>
+                                        {CategoryAnother.label.toUpperCase()}
+                                    </em>
                                 </MenuItem>
                             </Select>
                             {errors.category && (

@@ -9,7 +9,7 @@ import React from 'react';
 const BoxMain = styled(Box)(({ theme }) => ({
     display: 'flex',
     padding: '3%',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     [theme.breakpoints.up('xs')]: {
         flexDirection: 'column',
     },
@@ -17,11 +17,17 @@ const BoxMain = styled(Box)(({ theme }) => ({
         flexDirection: 'row',
         margin: '0 5%',
     },
+    [theme.breakpoints.up('lg')]: {
+        margin: '0 10%',
+    },
+    [theme.breakpoints.up('xl')]: {
+        margin: '0 15%',
+    },
 }));
 
 const BoxCategories = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('xs')]: {
-        margin: '5px 10px 20px 10px',
+        margin: '5px 0 20px 0',
     },
     [theme.breakpoints.up('md')]: {
         margin: '0 50px 0 0',
@@ -34,24 +40,15 @@ const Header = styled('h1')(({ theme }) => ({
     margin: 0,
 }));
 
-const BoxTransactions = styled(Box)(({ theme }) => ({
-    margin: '0px 10px',
-    [theme.breakpoints.up('md')]: {
-        width: '100%',
-    },
-    [theme.breakpoints.up('lg')]: {
-        width: '80%',
-    },
-    [theme.breakpoints.up('xl')]: {
-        width: '60%',
-    },
-}));
+const BoxTransactions = styled(Box)({
+    width: '100%',
+});
 
-const DivTransactions = styled('div')(({ theme }) => ({
+const DivTransactions = styled('div')({
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
-}));
+});
 
 const Main: React.FC = () => {
     return (

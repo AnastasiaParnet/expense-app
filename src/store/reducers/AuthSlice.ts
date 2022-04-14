@@ -10,7 +10,7 @@ import {
 } from './ActionCreators';
 
 interface AuthState {
-    idUser: number | null;
+    idUser: string | null;
 }
 
 const initialState: AuthState = {
@@ -28,13 +28,13 @@ export const authSlice = createSlice({
     extraReducers: {
         [authorizationUserByNameAndPassword.fulfilled.type]: (
             state,
-            action: PayloadAction<number>
+            action: PayloadAction<string>
         ) => {
             state.idUser = action.payload;
         },
         [authorizationUserByToken.fulfilled.type]: (
             state,
-            action: PayloadAction<number>
+            action: PayloadAction<string>
         ) => {
             state.idUser = action.payload;
         },

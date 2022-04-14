@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import { addCategory } from 'store/reducers/ActionCreators';
 import { authSelector } from 'store/reducers/AuthSlice';
 import { categorySelector } from 'store/reducers/CategorySlice';
+import { v4 as uuidv4 } from 'uuid';
 import * as yup from 'yup';
 
 interface InterfaceAddCategory {
@@ -49,12 +50,12 @@ const FormAddCategory: React.FC = () => {
 
     const clickAddCategory = (data: InterfaceAddCategory) => {
         const inputLabel = data.label.toLowerCase();
-        const idCategoryInCategories = categories.findIndex(
+        const idCategoryInArrayCategories = categories.findIndex(
             (category) => category.label == inputLabel
         );
-        if (idUser && idCategoryInCategories === -1) {
+        if (idUser && idCategoryInArrayCategories === -1) {
             const newCategory: ICategory = {
-                id: categories.length + 1,
+                id: uuidv4(),
                 label: inputLabel,
             };
             const dataForAdd = {

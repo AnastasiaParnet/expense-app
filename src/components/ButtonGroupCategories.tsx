@@ -3,7 +3,7 @@ import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { styled } from '@mui/system';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import { CategoryAnother, ICategory } from 'models/ICategory';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     changeActualCategories,
     changeCategoryForTransactions,
@@ -28,32 +28,49 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
 }) => {
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
-    const { categories, actualCategories } = useAppSelector(categorySelector);
+    const { categories, arrayIdActualCategories } =
+        useAppSelector(categorySelector);
+    const [actualCategories, setActualCategories] = useState<string[]>(
+        arrayIdActualCategories
+    );
 
-    const handleChange = (
-        event: React.MouseEvent<HTMLElement>,
-        newCategories: number[]
-    ) => {
-        dispatch(changeActualCategories(newCategories));
-        closeNavMenu();
-    };
-
-    const clickDeleteCategory = (idCategory: number, idUser: number | null) => {
+    const clickDeleteCategory = (idCategory: string, idUser: string | null) => {
         if (idUser) {
             dispatch(deleteCategory({ idUser, idCategory }));
             dispatch(changeCategoryForTransactions({ idUser, idCategory }));
         }
     };
 
+    const clickAllTransactions = () => {
+        setActualCategories([]);
+    };
+
+    const clickOnCategory = (id: string) => {
+        if (actualCategories.includes(id)) {
+            setActualCategories(actualCategories.filter((el) => el !== id));
+        } else setActualCategories([...actualCategories, id]);
+    };
+
+    useEffect(() => {
+        dispatch(changeActualCategories(actualCategories));
+        closeNavMenu();
+    }, [closeNavMenu, dispatch, actualCategories]);
+
     return (
         <>
             <StatToggleButtonGroup
                 orientation="vertical"
                 value={actualCategories}
-                onChange={handleChange}
             >
+                <ToggleButton value="" onClick={clickAllTransactions}>
+                    Всі транзакції
+                </ToggleButton>
                 {categories.map((category: ICategory) => (
-                    <ToggleButton key={category.id} value={category.id}>
+                    <ToggleButton
+                        key={category.id}
+                        value={category.id}
+                        onClick={() => clickOnCategory(category.id)}
+                    >
                         {category.label}
                         {isDeleteCategory && (
                             <div>
@@ -70,7 +87,10 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                         )}
                     </ToggleButton>
                 ))}
-                <ToggleButton value={CategoryAnother.id}>
+                <ToggleButton
+                    value={CategoryAnother.id}
+                    onClick={() => clickOnCategory(CategoryAnother.id)}
+                >
                     {CategoryAnother.label}
                 </ToggleButton>
             </StatToggleButtonGroup>

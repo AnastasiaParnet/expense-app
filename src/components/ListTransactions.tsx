@@ -7,10 +7,11 @@ import { categorySelector } from 'store/reducers/CategorySlice';
 import { transactionSelector } from 'store/reducers/TransactionSlice';
 
 const ListTransactions: React.FC = () => {
-    const { actualCategories, categories } = useAppSelector(categorySelector);
+    const { arrayIdActualCategories, categories } =
+        useAppSelector(categorySelector);
     const { transactions } = useAppSelector(transactionSelector);
 
-    const nameCategory = (idCategory: number) => {
+    const nameCategory = (idCategory: string) => {
         const category = categories.find(
             (category: ICategory) => category.id == idCategory
         );
@@ -22,7 +23,10 @@ const ListTransactions: React.FC = () => {
     return (
         <div>
             {transactions.map((tran: ITransaction) => {
-                if (actualCategories.includes(tran.id_category))
+                if (
+                    arrayIdActualCategories.length == 0 ||
+                    arrayIdActualCategories.includes(tran.id_category)
+                )
                     return (
                         <ItemTransaction
                             label={tran.label}

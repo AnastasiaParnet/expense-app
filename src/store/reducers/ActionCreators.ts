@@ -52,7 +52,7 @@ export const authorizationUserByToken = createAsyncThunk(
 
 //actions with categorySlice
 export const initializationCategories =
-    (idUser: number) => (dispatch: AppDispatch) => {
+    (idUser: string) => (dispatch: AppDispatch) => {
         let masCategories: ICategory[];
         const localCategories = localStorage.getItem(`categories_${idUser}`);
         if (localCategories) {
@@ -60,15 +60,15 @@ export const initializationCategories =
         } else {
             masCategories = [
                 {
-                    id: 1,
+                    id: '1',
                     label: 'зарплатня',
                 },
                 {
-                    id: 2,
+                    id: '2',
                     label: 'подарунки',
                 },
                 {
-                    id: 3,
+                    id: '3',
                     label: 'подорож',
                 },
             ];
@@ -77,20 +77,15 @@ export const initializationCategories =
                 JSON.stringify(masCategories)
             );
         }
-        const masActualCategories: number[] = masCategories.map(
+        const arrayIdActualCategories: string[] = masCategories.map(
             (category: ICategory) => category.id
         );
-        dispatch(categorySlice.actions.initialCategory(masCategories));
-        dispatch(
-            categorySlice.actions.changeActualCategories([
-                ...masActualCategories,
-                CategoryAnother.id,
-            ])
-        );
+        dispatch(categorySlice.actions.saveCategories(masCategories));
+        dispatch(categorySlice.actions.changeArrayIdActualCategories([]));
     };
 
 export const addCategory =
-    ({ idUser, newCategory }: { idUser: number; newCategory: ICategory }) =>
+    ({ idUser, newCategory }: { idUser: string; newCategory: ICategory }) =>
     (dispatch: AppDispatch) => {
         let masCategories: ICategory[] = [];
         const localCategories = localStorage.getItem(`categories_${idUser}`);
@@ -111,8 +106,8 @@ export const changeNameCategory =
         idCategory,
         newLabel,
     }: {
-        idUser: number;
-        idCategory: number;
+        idUser: string;
+        idCategory: string;
         newLabel: string;
     }) =>
     (dispatch: AppDispatch) => {
@@ -133,11 +128,11 @@ export const changeNameCategory =
             `categories_${idUser}`,
             JSON.stringify(masCategories)
         );
-        dispatch(categorySlice.actions.initialCategory(masCategories));
+        dispatch(categorySlice.actions.saveCategories(masCategories));
     };
 
 export const deleteCategory =
-    ({ idUser, idCategory }: { idUser: number; idCategory: number }) =>
+    ({ idUser, idCategory }: { idUser: string; idCategory: string }) =>
     (dispatch: AppDispatch) => {
         let masCategories: ICategory[] = [];
         const localCategories = localStorage.getItem(`categories_${idUser}`);
@@ -151,24 +146,24 @@ export const deleteCategory =
             `categories_${idUser}`,
             JSON.stringify(masCategories)
         );
-        dispatch(categorySlice.actions.initialCategory(masCategories));
+        dispatch(categorySlice.actions.saveCategories(masCategories));
     };
 
 export const changeActualCategories =
-    (masId: number[]) => (dispatch: AppDispatch) => {
-        dispatch(categorySlice.actions.changeActualCategories(masId));
+    (masId: string[]) => (dispatch: AppDispatch) => {
+        dispatch(categorySlice.actions.changeArrayIdActualCategories(masId));
     };
 
 //actions with transactionSlice
 export const initializationTransactions =
-    (idUser: number) => (dispatch: AppDispatch) => {
+    (idUser: string) => (dispatch: AppDispatch) => {
         const localTransactions = localStorage.getItem(
             `transactions_${idUser}`
         );
         if (localTransactions) {
             const masTransactions = JSON.parse(localTransactions);
             dispatch(
-                transactionSlice.actions.initialTransaction(masTransactions)
+                transactionSlice.actions.saveTransactions(masTransactions)
             );
         }
     };
@@ -178,7 +173,7 @@ export const addTransaction =
         idUser,
         newTransaction,
     }: {
-        idUser: number;
+        idUser: string;
         newTransaction: ITransaction;
     }) =>
     (dispatch: AppDispatch) => {
@@ -198,7 +193,7 @@ export const addTransaction =
     };
 
 export const changeCategoryForTransactions =
-    ({ idUser, idCategory }: { idUser: number; idCategory: number }) =>
+    ({ idUser, idCategory }: { idUser: string; idCategory: string }) =>
     (dispatch: AppDispatch) => {
         let masTransactions: ITransaction[] = [];
         const localTransactions = localStorage.getItem(
@@ -219,7 +214,7 @@ export const changeCategoryForTransactions =
             `transactions_${idUser}`,
             JSON.stringify(masTransactions)
         );
-        dispatch(transactionSlice.actions.initialTransaction(masTransactions));
+        dispatch(transactionSlice.actions.saveTransactions(masTransactions));
     };
 
 //actions with all slices

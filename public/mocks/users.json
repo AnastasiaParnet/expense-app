@@ -1,25 +1,25 @@
 {
     "users": [
         {
-            "id": 1,
+            "id": "1",
             "username": "John Smith",
             "password": "U2FsdGVkX19+ZyZ0c0qgIBYq8+AWsy1g/zgh1GkuCME=",
             "token": "d6bebbebaf4f6741df1619add9dcf6942dfd5f840a102b4ea826db06acb96177"
         },
         {
-            "id": 2,
+            "id": "2",
             "username": "potter",
             "password": "U2FsdGVkX19+ZyZ0c0qgIBYq8+AWsy1g/zgh1GkuCME=",
             "token": "41804b236dc0df7264f02644a51bded9ad8ce0ba09b2c86b993929c0265ed333"
         },
         {
-            "id": 3,
+            "id": "3",
             "username": "treloni",
             "password": "U2FsdGVkX19+ZyZ0c0qgIBYq8+AWsy1g/zgh1GkuCME=",
             "token": "c5a01b4cb7ba07c65d6b2a82eccb1aea1a906da22b97753b146c14cf786bb1ec"
         },
         {
-            "id": 4,
+            "id": "4",
             "username": "dumbledore",
             "password": "U2FsdGVkX19+ZyZ0c0qgIBYq8+AWsy1g/zgh1GkuCME=",
             "token": "aae7f9f57eac13354600b977217b337c4dac6a58a42ba2cd0531eda070fdae41"

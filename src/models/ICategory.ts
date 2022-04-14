@@ -1,6 +1,6 @@
 export interface ICategory {
-    id: number;
+    id: string;
     label: string;
 }
 
-export const CategoryAnother: ICategory = { id: 0, label: 'інше' };
+export const CategoryAnother: ICategory = { id: '0', label: 'інше' };

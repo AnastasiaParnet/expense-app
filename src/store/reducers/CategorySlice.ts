@@ -8,30 +8,30 @@ import { RootState } from 'store/store';
 
 interface CategoryState {
     categories: ICategory[];
-    actualCategories: number[];
+    arrayIdActualCategories: string[];
 }
 
 const initialState: CategoryState = {
     categories: [],
-    actualCategories: [],
+    arrayIdActualCategories: [],
 };
 
 export const categorySlice = createSlice({
     name: 'category',
     initialState,
     reducers: {
-        initialCategory(state, action: PayloadAction<ICategory[]>) {
+        saveCategories(state, action: PayloadAction<ICategory[]>) {
             state.categories = action.payload;
         },
         addCategory(state, action: PayloadAction<ICategory>) {
             state.categories = [...state.categories, action.payload];
         },
-        changeActualCategories(state, action: PayloadAction<number[]>) {
-            state.actualCategories = action.payload;
+        changeArrayIdActualCategories(state, action: PayloadAction<string[]>) {
+            state.arrayIdActualCategories = action.payload;
         },
         clearCategory(state) {
             state.categories = [];
-            state.actualCategories = [];
+            state.arrayIdActualCategories = [];
         },
     },
 });

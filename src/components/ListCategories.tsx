@@ -1,6 +1,5 @@
 import { Box, Menu, ToggleButton } from '@mui/material';
 import { styled } from '@mui/system';
-import ButtonAllCategories from 'components/ButtonAllCategories';
 import ButtonGroupCategories from 'components/ButtonGroupCategories';
 import React, { useState } from 'react';
 
@@ -72,7 +71,6 @@ const ListCategories: React.FC<ListCategoriesProps> = ({
 
     return (
         <StatDiv>
-            <ButtonAllCategories />
             <Box>
                 <SmallBox>
                     <StatToggleButton value="" onClick={handleOpenNavMenu}>

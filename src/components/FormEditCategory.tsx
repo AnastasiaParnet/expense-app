@@ -11,7 +11,7 @@ import { changeNameCategory } from 'store/reducers/ActionCreators';
 import { authSelector } from 'store/reducers/AuthSlice';
 
 interface FormEditCategoryProps {
-    id: number;
+    id: string;
     name: string;
 }
 
