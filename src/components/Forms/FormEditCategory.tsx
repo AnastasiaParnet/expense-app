@@ -39,7 +39,7 @@ const FormEditCategory: React.FC<FormEditCategoryProps> = ({ id, name }) => {
                 idUser,
                 idCategory: id,
                 newLabel: label,
-                masCategories: categories,
+                categories,
             };
             dispatch(changeNameCategory(data));
             setOpen(false);

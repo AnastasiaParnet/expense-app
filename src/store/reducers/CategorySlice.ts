@@ -34,11 +34,11 @@ const addCategory = createAsyncThunk(
     async (
         {
             idUser,
-            masCategories,
+            categories,
             labelNewCategory,
         }: {
             idUser: string;
-            masCategories: ICategory[];
+            categories: ICategory[];
             labelNewCategory: string;
         },
         thunkAPI
@@ -49,11 +49,11 @@ const addCategory = createAsyncThunk(
                 label: labelNewCategory,
                 read_only: false,
             };
-            masCategories = [...masCategories, newCategory];
+            categories = [...categories, newCategory];
             const response = await axios.patch<IUser>(
                 `http://localhost:8000/users/${idUser}`,
                 {
-                    categories: masCategories,
+                    categories: categories,
                 }
             );
             return response.data.categories;
@@ -70,17 +70,17 @@ const changeNameCategory = createAsyncThunk(
             idUser,
             idCategory,
             newLabel,
-            masCategories,
+            categories,
         }: {
             idUser: string;
             idCategory: string;
             newLabel: string;
-            masCategories: ICategory[];
+            categories: ICategory[];
         },
         thunkAPI
     ) => {
         try {
-            masCategories = masCategories.map((category: ICategory) => {
+            categories = categories.map((category: ICategory) => {
                 if (category.id === idCategory)
                     return {
                         id: category.id,
@@ -92,7 +92,7 @@ const changeNameCategory = createAsyncThunk(
             const response = await axios.patch<IUser>(
                 `http://localhost:8000/users/${idUser}`,
                 {
-                    categories: masCategories,
+                    categories: categories,
                 }
             );
             return response.data.categories;
@@ -108,22 +108,22 @@ const deleteCategory = createAsyncThunk(
         {
             idUser,
             idCategory,
-            masCategories,
+            categories,
         }: {
             idUser: string;
             idCategory: string;
-            masCategories: ICategory[];
+            categories: ICategory[];
         },
         thunkAPI
     ) => {
         try {
-            masCategories = masCategories.filter(
+            categories = categories.filter(
                 (category: ICategory) => category.id !== idCategory
             );
             const response = await axios.patch<IUser>(
                 `http://localhost:8000/users/${idUser}`,
                 {
-                    categories: masCategories,
+                    categories: categories,
                 }
             );
             return response.data.categories;

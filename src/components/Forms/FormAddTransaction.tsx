@@ -1,18 +1,18 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     FormControl,
     FormHelperText,
     InputLabel,
     MenuItem,
     Select,
+    TextField,
 } from '@mui/material';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import { ICategory } from 'models/ICategory';
 import React, { useState } from 'react';
@@ -74,7 +74,7 @@ const FormAddTransaction: React.FC = () => {
             const dataForAdd = {
                 ...data,
                 idUser,
-                masTransactions: transactions,
+                transactions,
             };
             dispatch(addTransaction(dataForAdd));
         }

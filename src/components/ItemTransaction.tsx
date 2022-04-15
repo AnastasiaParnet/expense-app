@@ -1,27 +1,25 @@
-import Paper from '@mui/material/Paper';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React from 'react';
+import FormChangeTransaction from 'components/Forms/FormChangeTransaction';
+import { ITransaction } from 'models/ITransaction';
+import React, { useState } from 'react';
 
 interface ItemTransactionProps {
-    label: string;
+    transaction: ITransaction;
     category: string;
-    date: string;
-    amount: number;
 }
-
-const Item = styled(Paper)(({ theme }) => ({
-    ...theme.typography.body2,
-    margin: '10px 0',
-    padding: theme.spacing(1),
-    textAlign: 'left',
-    color: theme.palette.text.secondary,
-}));
 
 const Label = styled('span')({
     fontSize: '20px',
 });
 
 const DivItem = styled('div')({
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+});
+
+const DivLabel = styled('div')({
     display: 'flex',
     justifyContent: 'space-between',
 });
@@ -32,22 +30,36 @@ const Amount = styled('h1')({
 });
 
 const ItemTransaction: React.FC<ItemTransactionProps> = ({
-    label,
+    transaction,
     category,
-    date,
-    amount,
 }) => {
+    const [expand, setExpand] = useState<boolean>(false);
+
+    const changeExpanded = () => {
+        setExpand((prev) => !prev);
+    };
+
     return (
-        <Item>
-            <DivItem>
-                <Label>{label}</Label>
-                <span>{category.toUpperCase()}</span>
-            </DivItem>
-            <DivItem>
-                <Amount>{amount}</Amount>
-                <span>{date}</span>
-            </DivItem>
-        </Item>
+        <Accordion expanded={expand}>
+            <AccordionSummary onClick={changeExpanded}>
+                <DivItem>
+                    <DivLabel>
+                        <Label>{transaction.label}</Label>
+                        <span>{category.toUpperCase()}</span>
+                    </DivLabel>
+                    <DivLabel>
+                        <Amount>{transaction.amount}</Amount>
+                        <span>{transaction.date}</span>
+                    </DivLabel>
+                </DivItem>
+            </AccordionSummary>
+            <AccordionDetails>
+                <FormChangeTransaction
+                    transaction={transaction}
+                    closeForm={changeExpanded}
+                />
+            </AccordionDetails>
+        </Accordion>
     );
 };
 

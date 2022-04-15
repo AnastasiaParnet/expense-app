@@ -1,4 +1,5 @@
-import Navbar from 'components/Navbar';
+import NavbarBase from 'components/Navbar/NavbarBase';
+import NavbarHome from 'components/Navbar/NavbarHome';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import React, { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
@@ -22,7 +23,9 @@ export const HomePage: React.FC = () => {
 
     return (
         <>
-            <Navbar isAuth={true} />
+            <NavbarBase>
+                <NavbarHome />
+            </NavbarBase>
             <Routes>
                 <Route path={MAIN_SCREEN} element={<Main />} />
                 <Route path={GRAPHICS_SCREEN} element={<Graphics />} />

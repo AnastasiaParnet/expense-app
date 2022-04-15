@@ -1,5 +1,5 @@
 import { styled } from '@mui/system';
-import FormLogIn from 'components/FormLogIn';
+import FormLogIn from 'components/Forms/FormLogIn';
 import React from 'react';
 
 const DivLogIn = styled('div')({

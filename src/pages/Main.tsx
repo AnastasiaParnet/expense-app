@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import styled from '@mui/system/styled';
 import BaseBox from 'components/BaseBox';
-import FormAddTransaction from 'components/FormAddTransaction';
+import FormAddTransaction from 'components/Forms/FormAddTransaction';
 import ListTransactions from 'components/ListTransactions';
 import React from 'react';
 

@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import styled from '@mui/system/styled';
-import FormAddCategory from 'components/FormAddCategory';
+import FormAddCategory from 'components/Forms/FormAddCategory';
 import ListCategories from 'components/ListCategories';
 import React from 'react';
 

@@ -33,13 +33,13 @@ const addTransaction = createAsyncThunk(
     async (
         {
             idUser,
-            masTransactions,
+            transactions,
             label,
             amount,
             idCategory,
         }: {
             idUser: string;
-            masTransactions: ITransaction[];
+            transactions: ITransaction[];
             label: string;
             amount: number;
             idCategory: string;
@@ -59,11 +59,11 @@ const addTransaction = createAsyncThunk(
                 amount,
                 id_category: idCategory,
             };
-            masTransactions = [...masTransactions, newTransaction];
+            transactions = [...transactions, newTransaction];
             const response = await axios.patch<IUser>(
                 `http://localhost:8000/users/${idUser}`,
                 {
-                    transactions: masTransactions,
+                    transactions: transactions,
                 }
             );
             return response.data.transactions;
@@ -80,31 +80,63 @@ const changeCategoryForTransactions = createAsyncThunk(
             idUser,
             oldIdCategory,
             newIdCategory,
-            masTransactions,
+            transactions,
         }: {
             idUser: string;
             oldIdCategory: string;
             newIdCategory: string;
-            masTransactions: ITransaction[];
+            transactions: ITransaction[];
         },
         thunkAPI
     ) => {
         try {
-            masTransactions = masTransactions.map(
-                (transaction: ITransaction) => {
-                    if (transaction.id_category == oldIdCategory) {
-                        return {
-                            ...transaction,
-                            id_category: newIdCategory,
-                        };
-                    }
-                    return transaction;
+            transactions = transactions.map((transaction: ITransaction) => {
+                if (transaction.id_category == oldIdCategory) {
+                    return {
+                        ...transaction,
+                        id_category: newIdCategory,
+                    };
                 }
-            );
+                return transaction;
+            });
             const response = await axios.patch<IUser>(
                 `http://localhost:8000/users/${idUser}`,
                 {
-                    transactions: masTransactions,
+                    transactions: transactions,
+                }
+            );
+            return response.data.transactions;
+        } catch (e) {
+            return thunkAPI.rejectWithValue('Не вдалося');
+        }
+    }
+);
+
+const changeTransaction = createAsyncThunk(
+    'transaction/changeTransaction',
+    async (
+        {
+            idUser,
+            newDataTransaction,
+            transactions,
+        }: {
+            idUser: string;
+            newDataTransaction: ITransaction;
+            transactions: ITransaction[];
+        },
+        thunkAPI
+    ) => {
+        try {
+            transactions = transactions.map((transaction: ITransaction) => {
+                if (transaction.id_category == newDataTransaction.id_category) {
+                    return newDataTransaction;
+                }
+                return transaction;
+            });
+            const response = await axios.patch<IUser>(
+                `http://localhost:8000/users/${idUser}`,
+                {
+                    transactions: transactions,
                 }
             );
             return response.data.transactions;
@@ -149,6 +181,12 @@ const transactionSlice = createSlice({
         ) => {
             state.transactions = action.payload;
         },
+        [changeTransaction.fulfilled.type]: (
+            state,
+            action: PayloadAction<ITransaction[]>
+        ) => {
+            state.transactions = action.payload;
+        },
     },
 });
 
@@ -164,5 +202,6 @@ export {
     initializationTransactions,
     addTransaction,
     changeCategoryForTransactions,
+    changeTransaction,
     clearTransaction,
 };

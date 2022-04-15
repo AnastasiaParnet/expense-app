@@ -14,7 +14,7 @@ import {
     changeCategoryForTransactions,
     transactionSelector,
 } from 'store/reducers/TransactionSlice';
-import FormEditCategory from './FormEditCategory';
+import FormEditCategory from './Forms/FormEditCategory';
 
 interface ButtonGroupCategoriesProps {
     isChangeCategory: boolean;
@@ -24,6 +24,24 @@ interface ButtonGroupCategoriesProps {
 const StatToggleButtonGroup = styled(ToggleButtonGroup)({
     width: '200px',
 });
+
+const ToggleButtonChange = styled(ToggleButton)(({ theme }) => ({
+    [theme.breakpoints.up('xs')]: {
+        '& svg': {
+            color: 'rgba(0,0,0,0.54)',
+        },
+    },
+    [theme.breakpoints.up('md')]: {
+        '& svg': {
+            color: 'rgba(0,0,0,0)',
+        },
+        '&:hover': {
+            '& svg': {
+                color: 'rgba(0,0,0,0.54)',
+            },
+        },
+    },
+}));
 
 const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
     isChangeCategory,
@@ -44,7 +62,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                 deleteCategory({
                     idUser,
                     idCategory,
-                    masCategories: categories,
+                    categories,
                 })
             );
             const newIdCategoryForTransactions = categories.find(
@@ -55,7 +73,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                     idUser,
                     oldIdCategory: idCategory,
                     newIdCategory: newIdCategoryForTransactions || '',
-                    masTransactions: transactions,
+                    transactions,
                 })
             );
         }
@@ -63,6 +81,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
 
     const clickAllTransactions = () => {
         setActualCategories([]);
+        closeNavMenu();
     };
 
     const clickOnCategory = (id: string) => {
@@ -73,8 +92,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
 
     useEffect(() => {
         dispatch(changeActualCategories(actualCategories));
-        closeNavMenu();
-    }, [closeNavMenu, dispatch, actualCategories]);
+    }, [dispatch, actualCategories]);
 
     return (
         <>
@@ -88,7 +106,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                 {categories.map((category: ICategory) => {
                     return (
                         !category.read_only && (
-                            <ToggleButton
+                            <ToggleButtonChange
                                 key={category.id}
                                 value={category.id}
                                 onClick={() => clickOnCategory(category.id)}
@@ -110,7 +128,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                                         />
                                     </div>
                                 )}
-                            </ToggleButton>
+                            </ToggleButtonChange>
                         )
                     );
                 })}
