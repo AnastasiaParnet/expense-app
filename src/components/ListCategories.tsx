@@ -4,7 +4,7 @@ import ButtonGroupCategories from 'components/ButtonGroupCategories';
 import React, { useState } from 'react';
 
 interface ListCategoriesProps {
-    isDeleteCategory: boolean;
+    isChangeCategory: boolean;
 }
 
 const StatDiv = styled('div')(({ theme }) => ({
@@ -57,7 +57,7 @@ const StatMenu = styled(Menu)(({ theme }) => ({
 }));
 
 const ListCategories: React.FC<ListCategoriesProps> = ({
-    isDeleteCategory,
+    isChangeCategory,
 }) => {
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 
@@ -83,14 +83,14 @@ const ListCategories: React.FC<ListCategoriesProps> = ({
                         onClose={handleCloseNavMenu}
                     >
                         <ButtonGroupCategories
-                            isDeleteCategory={isDeleteCategory}
+                            isChangeCategory={isChangeCategory}
                             closeNavMenu={handleCloseNavMenu}
                         />
                     </StatMenu>
                 </SmallBox>
                 <BigBox>
                     <ButtonGroupCategories
-                        isDeleteCategory={isDeleteCategory}
+                        isChangeCategory={isChangeCategory}
                         closeNavMenu={handleCloseNavMenu}
                     />
                 </BigBox>

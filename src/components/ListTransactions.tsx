@@ -1,6 +1,6 @@
 import ItemTransaction from 'components/ItemTransaction';
 import { useAppSelector } from 'hooks/redux';
-import { CategoryAnother, ICategory } from 'models/ICategory';
+import { ICategory } from 'models/ICategory';
 import { ITransaction } from 'models/ITransaction';
 import React from 'react';
 import { categorySelector } from 'store/reducers/CategorySlice';
@@ -16,7 +16,6 @@ const ListTransactions: React.FC = () => {
             (category: ICategory) => category.id == idCategory
         );
         if (category) return category.label;
-        if (CategoryAnother.id == idCategory) return CategoryAnother.label;
         return '';
     };
 

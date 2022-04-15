@@ -7,13 +7,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
-import { ICategory } from 'models/ICategory';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { addCategory } from 'store/reducers/ActionCreators';
 import { authSelector } from 'store/reducers/AuthSlice';
-import { categorySelector } from 'store/reducers/CategorySlice';
-import { v4 as uuidv4 } from 'uuid';
+import { addCategory, categorySelector } from 'store/reducers/CategorySlice';
 import * as yup from 'yup';
 
 interface InterfaceAddCategory {
@@ -54,13 +51,10 @@ const FormAddCategory: React.FC = () => {
             (category) => category.label == inputLabel
         );
         if (idUser && idCategoryInArrayCategories === -1) {
-            const newCategory: ICategory = {
-                id: uuidv4(),
-                label: inputLabel,
-            };
             const dataForAdd = {
                 idUser,
-                newCategory,
+                labelNewCategory: inputLabel,
+                masCategories: categories,
             };
             dispatch(addCategory(dataForAdd));
         }

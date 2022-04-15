@@ -14,32 +14,34 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
-import { CategoryAnother, ICategory } from 'models/ICategory';
-import { ITransaction } from 'models/ITransaction';
+import { ICategory } from 'models/ICategory';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { addTransaction } from 'store/reducers/ActionCreators';
 import { authSelector } from 'store/reducers/AuthSlice';
 import { categorySelector } from 'store/reducers/CategorySlice';
-import { v4 as uuidv4 } from 'uuid';
+import {
+    addTransaction,
+    transactionSelector,
+} from 'store/reducers/TransactionSlice';
 import * as yup from 'yup';
 
 interface InterfaceAddTransaction {
     label: string;
     amount: number;
-    category: string;
+    idCategory: string;
 }
 
 const validationSchema = yup.object({
     label: yup.string().required('Введіть назву транзакції'),
     amount: yup.number().integer('number').required('Введіть суму'),
-    category: yup.string().required('Оберіть категорію'),
+    idCategory: yup.string().required('Оберіть категорію'),
 });
 
 const FormAddTransaction: React.FC = () => {
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
     const { categories } = useAppSelector(categorySelector);
+    const { transactions } = useAppSelector(transactionSelector);
     const [open, setOpen] = useState<boolean>(false);
 
     const {
@@ -69,21 +71,10 @@ const FormAddTransaction: React.FC = () => {
         reset();
         setOpen(false);
         if (idUser) {
-            const dateNowString = new Date().toLocaleString('ukr', {
-                day: 'numeric',
-                month: 'numeric',
-                year: 'numeric',
-            });
-            const newTransaction: ITransaction = {
-                id: uuidv4(),
-                label: data.label,
-                date: dateNowString,
-                amount: data.amount,
-                id_category: data.category,
-            };
             const dataForAdd = {
+                ...data,
                 idUser,
-                newTransaction,
+                masTransactions: transactions,
             };
             dispatch(addTransaction(dataForAdd));
         }
@@ -125,7 +116,7 @@ const FormAddTransaction: React.FC = () => {
                         <FormControl
                             variant="standard"
                             fullWidth
-                            error={errors?.category ? true : false}
+                            error={errors?.idCategory ? true : false}
                         >
                             <InputLabel id="category">
                                 Назва категорії
@@ -133,24 +124,37 @@ const FormAddTransaction: React.FC = () => {
                             <Select
                                 labelId="category"
                                 id="demo-simple-select-standard"
-                                defaultValue={CategoryAnother.id}
-                                {...register('category')}
+                                defaultValue=""
+                                {...register('idCategory')}
                             >
-                                {categories.map((category: ICategory) => (
-                                    <MenuItem
-                                        key={category.id}
-                                        value={category.id}
-                                    >
-                                        {category.label.toUpperCase()}
-                                    </MenuItem>
-                                ))}
-                                <MenuItem value={CategoryAnother.id}>
-                                    <em>
-                                        {CategoryAnother.label.toUpperCase()}
-                                    </em>
-                                </MenuItem>
+                                {categories.map((category: ICategory) => {
+                                    return (
+                                        !category.read_only && (
+                                            <MenuItem
+                                                key={category.id}
+                                                value={category.id}
+                                            >
+                                                {category.label.toUpperCase()}
+                                            </MenuItem>
+                                        )
+                                    );
+                                })}
+                                {categories.map((category: ICategory) => {
+                                    return (
+                                        category.read_only && (
+                                            <MenuItem
+                                                key={category.id}
+                                                value={category.id}
+                                            >
+                                                <em>
+                                                    {category.label.toUpperCase()}
+                                                </em>
+                                            </MenuItem>
+                                        )
+                                    );
+                                })}
                             </Select>
-                            {errors.category && (
+                            {errors.idCategory && (
                                 <FormHelperText>
                                     Оберіть категорію
                                 </FormHelperText>

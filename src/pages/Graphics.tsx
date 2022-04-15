@@ -33,7 +33,7 @@ const Graphics: React.FC = () => {
     return (
         <BoxMain>
             <Box>
-                <ListCategories isDeleteCategory={false} />
+                <ListCategories isChangeCategory={false} />
             </Box>
             <BoxChart>
                 <Chart />

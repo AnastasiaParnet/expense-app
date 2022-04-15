@@ -13,7 +13,9 @@ import { useAppDispatch } from 'hooks/redux';
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { GRAPHICS_SCREEN, LOGIN_PATH, MAIN_SCREEN } from 'routes';
-import { clearAll } from 'store/reducers/ActionCreators';
+import { clearUser } from 'store/reducers/AuthSlice';
+import { clearCategory } from 'store/reducers/CategorySlice';
+import { clearTransaction } from 'store/reducers/TransactionSlice';
 
 interface NavbarProps {
     isAuth: boolean;
@@ -112,7 +114,9 @@ const Navbar: React.FC<NavbarProps> = ({ isAuth }) => {
 
     const logOut = () => {
         localStorage.removeItem('token');
-        dispatch(clearAll());
+        dispatch(clearUser());
+        dispatch(clearCategory());
+        dispatch(clearTransaction());
         navigate(LOGIN_PATH);
     };
 

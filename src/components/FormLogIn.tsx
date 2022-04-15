@@ -6,8 +6,10 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { MAIN_SCREEN } from 'routes';
-import { authorizationUserByNameAndPassword } from 'store/reducers/ActionCreators';
-import { authSelector } from 'store/reducers/AuthSlice';
+import {
+    authorizationUserByNameAndPassword,
+    authSelector,
+} from 'store/reducers/AuthSlice';
 import * as yup from 'yup';
 
 interface InterfaceLogIn {

@@ -2,7 +2,7 @@ import { useAppDispatch } from 'hooks/redux';
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { AUTH_PAGE } from 'routes';
-import { authorizationUserByToken } from 'store/reducers/ActionCreators';
+import { authorizationUserByToken } from 'store/reducers/AuthSlice';
 
 interface PrivateRouterProps {
     component: JSX.Element;

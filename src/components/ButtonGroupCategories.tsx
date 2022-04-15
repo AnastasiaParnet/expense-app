@@ -2,19 +2,22 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { styled } from '@mui/system';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
-import { CategoryAnother, ICategory } from 'models/ICategory';
+import { ICategory } from 'models/ICategory';
 import React, { useEffect, useState } from 'react';
-import {
-    changeActualCategories,
-    changeCategoryForTransactions,
-    deleteCategory,
-} from 'store/reducers/ActionCreators';
 import { authSelector } from 'store/reducers/AuthSlice';
-import { categorySelector } from 'store/reducers/CategorySlice';
+import {
+    categorySelector,
+    changeActualCategories,
+    deleteCategory,
+} from 'store/reducers/CategorySlice';
+import {
+    changeCategoryForTransactions,
+    transactionSelector,
+} from 'store/reducers/TransactionSlice';
 import FormEditCategory from './FormEditCategory';
 
 interface ButtonGroupCategoriesProps {
-    isDeleteCategory: boolean;
+    isChangeCategory: boolean;
     closeNavMenu(): void;
 }
 
@@ -23,11 +26,12 @@ const StatToggleButtonGroup = styled(ToggleButtonGroup)({
 });
 
 const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
-    isDeleteCategory,
+    isChangeCategory,
     closeNavMenu,
 }) => {
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
+    const { transactions } = useAppSelector(transactionSelector);
     const { categories, arrayIdActualCategories } =
         useAppSelector(categorySelector);
     const [actualCategories, setActualCategories] = useState<string[]>(
@@ -36,8 +40,24 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
 
     const clickDeleteCategory = (idCategory: string, idUser: string | null) => {
         if (idUser) {
-            dispatch(deleteCategory({ idUser, idCategory }));
-            dispatch(changeCategoryForTransactions({ idUser, idCategory }));
+            dispatch(
+                deleteCategory({
+                    idUser,
+                    idCategory,
+                    masCategories: categories,
+                })
+            );
+            const newIdCategoryForTransactions = categories.find(
+                (category) => category.read_only
+            )?.id;
+            dispatch(
+                changeCategoryForTransactions({
+                    idUser,
+                    oldIdCategory: idCategory,
+                    newIdCategory: newIdCategoryForTransactions || '',
+                    masTransactions: transactions,
+                })
+            );
         }
     };
 
@@ -65,34 +85,48 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                 <ToggleButton value="" onClick={clickAllTransactions}>
                     Всі транзакції
                 </ToggleButton>
-                {categories.map((category: ICategory) => (
-                    <ToggleButton
-                        key={category.id}
-                        value={category.id}
-                        onClick={() => clickOnCategory(category.id)}
-                    >
-                        {category.label}
-                        {isDeleteCategory && (
-                            <div>
-                                <FormEditCategory
-                                    id={category.id}
-                                    name={category.label}
-                                />
-                                <DeleteIcon
-                                    onClick={() =>
-                                        clickDeleteCategory(category.id, idUser)
-                                    }
-                                />
-                            </div>
-                        )}
-                    </ToggleButton>
-                ))}
-                <ToggleButton
-                    value={CategoryAnother.id}
-                    onClick={() => clickOnCategory(CategoryAnother.id)}
-                >
-                    {CategoryAnother.label}
-                </ToggleButton>
+                {categories.map((category: ICategory) => {
+                    return (
+                        !category.read_only && (
+                            <ToggleButton
+                                key={category.id}
+                                value={category.id}
+                                onClick={() => clickOnCategory(category.id)}
+                            >
+                                {category.label}
+                                {isChangeCategory && (
+                                    <div>
+                                        <FormEditCategory
+                                            id={category.id}
+                                            name={category.label}
+                                        />
+                                        <DeleteIcon
+                                            onClick={() =>
+                                                clickDeleteCategory(
+                                                    category.id,
+                                                    idUser
+                                                )
+                                            }
+                                        />
+                                    </div>
+                                )}
+                            </ToggleButton>
+                        )
+                    );
+                })}
+                {categories.map((category: ICategory) => {
+                    return (
+                        category.read_only && (
+                            <ToggleButton
+                                key={category.id}
+                                value={category.id}
+                                onClick={() => clickOnCategory(category.id)}
+                            >
+                                {category.label}
+                            </ToggleButton>
+                        )
+                    );
+                })}
             </StatToggleButtonGroup>
         </>
     );

@@ -54,7 +54,7 @@ const Main: React.FC = () => {
     return (
         <BoxMain>
             <BoxCategories>
-                <ListCategories isDeleteCategory={true} />
+                <ListCategories isChangeCategory={true} />
                 <FormAddCategory />
             </BoxCategories>
             <BoxTransactions>

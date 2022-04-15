@@ -3,11 +3,9 @@ import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import React, { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { GRAPHICS_SCREEN, MAIN_SCREEN } from 'routes';
-import {
-    initializationCategories,
-    initializationTransactions,
-} from 'store/reducers/ActionCreators';
 import { authSelector } from 'store/reducers/AuthSlice';
+import { initializationCategories } from 'store/reducers/CategorySlice';
+import { initializationTransactions } from 'store/reducers/TransactionSlice';
 import Graphics from './Graphics';
 import Main from './Main';
 
