@@ -7,15 +7,20 @@ import {
     Select,
     TextField,
 } from '@mui/material';
+import { styled } from '@mui/system';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import { ICategory } from 'models/ICategory';
 import { ITransaction } from 'models/ITransaction';
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { authSelector } from 'store/reducers/AuthSlice';
 import { categorySelector } from 'store/reducers/CategorySlice';
 import {
     changeTransaction,
+    deleteTransaction,
     transactionSelector,
 } from 'store/reducers/TransactionSlice';
 import * as yup from 'yup';
@@ -29,7 +34,21 @@ interface InterfaceChangeTransaction {
     label: string;
     amount: number;
     id_category: string;
+    date: Date;
 }
+
+const StatTextField = styled(TextField)({
+    margin: '10px 0',
+});
+
+const StatFormControl = styled(FormControl)({
+    margin: '10px 0',
+});
+
+const DivButton = styled('div')({
+    display: 'flex',
+    justifyContent: 'space-between',
+});
 
 const validationSchema = yup.object({
     label: yup.string().required('Введіть назву транзакції'),
@@ -47,29 +66,30 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
     const { transactions } = useAppSelector(transactionSelector);
 
     const {
+        control,
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { isDirty, errors },
         reset,
     } = useForm<InterfaceChangeTransaction>({
         mode: 'onChange',
         resolver: yupResolver(validationSchema),
+        defaultValues: {
+            label: transaction.label,
+            amount: transaction.amount,
+            date: new Date(transaction.date),
+        },
     });
 
     const clickChangeTransaction = (data: InterfaceChangeTransaction) => {
-        if (
-            data.label !== transaction.label ||
-            data.amount !== transaction.amount ||
-            data.id_category !== transaction.id_category
-        ) {
+        if (idUser) {
             const newDataTransaction: ITransaction = {
                 ...data,
                 id: transaction.id,
-                date: transaction.date,
             };
             dispatch(
                 changeTransaction({
-                    idUser: idUser || '',
+                    idUser,
                     newDataTransaction,
                     transactions,
                 })
@@ -83,29 +103,40 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
         reset();
     };
 
+    const clickDeleteTransaction = () => {
+        if (idUser) {
+            const dataForDelete = {
+                idUser,
+                idTransaction: transaction.id,
+                transactions,
+            };
+            dispatch(deleteTransaction(dataForDelete));
+        }
+    };
+
     return (
         <form>
-            <TextField
+            <StatTextField
                 fullWidth
+                size="small"
                 label="Назва транзакції"
                 variant="standard"
-                defaultValue={transaction.label}
                 {...register('label')}
                 error={errors?.label ? true : false}
                 helperText={
                     errors?.label ? errors.label.message || 'Error!!!' : ''
                 }
             />
-            <TextField
+            <StatTextField
                 fullWidth
+                size="small"
                 label="Сума транзакції"
                 variant="standard"
-                defaultValue={transaction.amount}
                 {...register('amount')}
                 error={errors?.amount ? true : false}
                 helperText={errors?.amount ? 'Введіть число' : ''}
             />
-            <FormControl fullWidth variant="standard">
+            <StatFormControl fullWidth size="small" variant="standard">
                 <InputLabel id="category">Назва категорії</InputLabel>
                 <Select
                     labelId="category"
@@ -132,11 +163,38 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
                         );
                     })}
                 </Select>
-            </FormControl>
-            <Button onClick={handleSubmit(clickChangeTransaction)}>
-                Змінити
-            </Button>
-            <Button onClick={cancelChange}>Відмінити зміни</Button>
+            </StatFormControl>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <Controller
+                    control={control}
+                    name="date"
+                    render={({ field: { onChange, value } }) => (
+                        <DatePicker
+                            disableFuture
+                            label="Дата"
+                            openTo="year"
+                            views={['year', 'month', 'day']}
+                            value={value}
+                            onChange={onChange}
+                            renderInput={(params) => <TextField {...params} />}
+                        />
+                    )}
+                />
+            </LocalizationProvider>
+            <DivButton>
+                <div>
+                    <Button
+                        disabled={!isDirty}
+                        onClick={handleSubmit(clickChangeTransaction)}
+                    >
+                        Зберегти
+                    </Button>
+                    <Button disabled={!isDirty} onClick={cancelChange}>
+                        Відмінити зміни
+                    </Button>
+                </div>
+                <Button onClick={clickDeleteTransaction}>Видалити</Button>
+            </DivButton>
         </form>
     );
 };

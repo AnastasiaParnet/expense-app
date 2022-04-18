@@ -1,6 +1,7 @@
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import FormChangeTransaction from 'components/Forms/FormChangeTransaction';
+import { dateToString } from 'hooks/date';
 import { ITransaction } from 'models/ITransaction';
 import React, { useState } from 'react';
 
@@ -10,7 +11,7 @@ interface ItemTransactionProps {
 }
 
 const Label = styled('span')({
-    fontSize: '20px',
+    fontSize: '18px',
 });
 
 const DivItem = styled('div')({
@@ -22,6 +23,7 @@ const DivItem = styled('div')({
 const DivLabel = styled('div')({
     display: 'flex',
     justifyContent: 'space-between',
+    fontFamily: 'Arial, Helvetica, sans-serif',
 });
 
 const Amount = styled('h1')({
@@ -49,7 +51,7 @@ const ItemTransaction: React.FC<ItemTransactionProps> = ({
                     </DivLabel>
                     <DivLabel>
                         <Amount>{transaction.amount}</Amount>
-                        <span>{transaction.date}</span>
+                        <span>{dateToString(transaction.date)}</span>
                     </DivLabel>
                 </DivItem>
             </AccordionSummary>

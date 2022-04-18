@@ -1,4 +1,5 @@
 import { styled } from '@mui/system';
+import { dateToString } from 'hooks/date';
 import { useAppSelector } from 'hooks/redux';
 import { ITransaction } from 'models/ITransaction';
 import React from 'react';
@@ -37,17 +38,15 @@ const Chart: React.FC = () => {
         .reduce((mas: IDataForGraphic[], transaction: ITransaction) => {
             const indexLastData = mas.length - 1;
             let amount = transaction.amount;
-            if (
-                indexLastData > -1 &&
-                mas[indexLastData].date === transaction.date
-            ) {
+            const dateString = dateToString(transaction.date);
+            if (indexLastData > -1 && mas[indexLastData].date === dateString) {
                 amount += mas[indexLastData].amount;
                 mas.pop();
             }
             return [
                 ...mas,
                 {
-                    date: transaction.date,
+                    date: dateString,
                     amount,
                 },
             ];

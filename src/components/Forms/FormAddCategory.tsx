@@ -25,7 +25,7 @@ const FormAddCategory: React.FC = () => {
     const { idUser } = useAppSelector(authSelector);
     const { categories } = useAppSelector(categorySelector);
     const dispatch = useAppDispatch();
-    const [open, setOpen] = useState<boolean>(false);
+    const [openForm, setOpenForm] = useState<boolean>(false);
 
     const {
         register,
@@ -37,12 +37,12 @@ const FormAddCategory: React.FC = () => {
         resolver: yupResolver(validationSchema),
     });
 
-    const handleClickOpen = () => {
-        setOpen(true);
+    const handleClickOpenForm = () => {
+        setOpenForm(true);
     };
 
     const handleClose = () => {
-        setOpen(false);
+        setOpenForm(false);
     };
 
     const clickAddCategory = (data: InterfaceAddCategory) => {
@@ -59,16 +59,16 @@ const FormAddCategory: React.FC = () => {
             dispatch(addCategory(dataForAdd));
         }
         reset();
-        setOpen(false);
+        setOpenForm(false);
     };
 
     return (
         <div>
-            <Button variant="text" onClick={handleClickOpen}>
+            <Button variant="text" onClick={handleClickOpenForm}>
                 <AddIcon />
                 Додати категорію
             </Button>
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={openForm} onClose={handleClose}>
                 <form>
                     <DialogTitle>Нова категорія</DialogTitle>
                     <DialogContent>

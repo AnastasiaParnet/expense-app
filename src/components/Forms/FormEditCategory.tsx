@@ -33,7 +33,7 @@ const FormEditCategory: React.FC<FormEditCategoryProps> = ({ id, name }) => {
         setOpen(false);
     };
 
-    const clickEditCategory = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const clickEditCategory = () => {
         if (idUser && label) {
             const data = {
                 idUser,

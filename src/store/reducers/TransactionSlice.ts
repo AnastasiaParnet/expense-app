@@ -33,37 +33,32 @@ const addTransaction = createAsyncThunk(
     async (
         {
             idUser,
-            transactions,
             label,
             amount,
             idCategory,
+            transactions,
         }: {
             idUser: string;
-            transactions: ITransaction[];
             label: string;
             amount: number;
             idCategory: string;
+            transactions: ITransaction[];
         },
         thunkAPI
     ) => {
         try {
-            const dateNowString = new Date().toLocaleString('ukr', {
-                day: 'numeric',
-                month: 'numeric',
-                year: 'numeric',
-            });
             const newTransaction: ITransaction = {
                 id: uuidv4(),
                 label,
-                date: dateNowString,
+                date: new Date(),
                 amount,
                 id_category: idCategory,
             };
-            transactions = [...transactions, newTransaction];
+            const newMasTransactions = [...transactions, newTransaction];
             const response = await axios.patch<IUser>(
                 `http://localhost:8000/users/${idUser}`,
                 {
-                    transactions: transactions,
+                    transactions: newMasTransactions,
                 }
             );
             return response.data.transactions;
@@ -90,19 +85,21 @@ const changeCategoryForTransactions = createAsyncThunk(
         thunkAPI
     ) => {
         try {
-            transactions = transactions.map((transaction: ITransaction) => {
-                if (transaction.id_category == oldIdCategory) {
-                    return {
-                        ...transaction,
-                        id_category: newIdCategory,
-                    };
+            const newMasTransactions = transactions.map(
+                (transaction: ITransaction) => {
+                    if (transaction.id_category == oldIdCategory) {
+                        return {
+                            ...transaction,
+                            id_category: newIdCategory,
+                        };
+                    }
+                    return transaction;
                 }
-                return transaction;
-            });
+            );
             const response = await axios.patch<IUser>(
                 `http://localhost:8000/users/${idUser}`,
                 {
-                    transactions: transactions,
+                    transactions: newMasTransactions,
                 }
             );
             return response.data.transactions;
@@ -127,16 +124,49 @@ const changeTransaction = createAsyncThunk(
         thunkAPI
     ) => {
         try {
-            transactions = transactions.map((transaction: ITransaction) => {
-                if (transaction.id_category == newDataTransaction.id_category) {
-                    return newDataTransaction;
+            const newMasTransactions = transactions.map(
+                (transaction: ITransaction) => {
+                    if (transaction.id == newDataTransaction.id) {
+                        return newDataTransaction;
+                    }
+                    return transaction;
                 }
-                return transaction;
-            });
+            );
             const response = await axios.patch<IUser>(
                 `http://localhost:8000/users/${idUser}`,
                 {
-                    transactions: transactions,
+                    transactions: newMasTransactions,
+                }
+            );
+            return response.data.transactions;
+        } catch (e) {
+            return thunkAPI.rejectWithValue('Не вдалося');
+        }
+    }
+);
+
+const deleteTransaction = createAsyncThunk(
+    'transaction/delete',
+    async (
+        {
+            idUser,
+            idTransaction,
+            transactions,
+        }: {
+            idUser: string;
+            idTransaction: string;
+            transactions: ITransaction[];
+        },
+        thunkAPI
+    ) => {
+        try {
+            const newMasTransactions = transactions.filter(
+                (transaction: ITransaction) => transaction.id !== idTransaction
+            );
+            const response = await axios.patch<IUser>(
+                `http://localhost:8000/users/${idUser}`,
+                {
+                    transactions: newMasTransactions,
                 }
             );
             return response.data.transactions;
@@ -187,6 +217,12 @@ const transactionSlice = createSlice({
         ) => {
             state.transactions = action.payload;
         },
+        [deleteTransaction.fulfilled.type]: (
+            state,
+            action: PayloadAction<ITransaction[]>
+        ) => {
+            state.transactions = action.payload;
+        },
     },
 });
 
@@ -203,5 +239,6 @@ export {
     addTransaction,
     changeCategoryForTransactions,
     changeTransaction,
+    deleteTransaction,
     clearTransaction,
 };

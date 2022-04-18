@@ -34,12 +34,12 @@ const addCategory = createAsyncThunk(
     async (
         {
             idUser,
-            categories,
             labelNewCategory,
+            categories,
         }: {
             idUser: string;
-            categories: ICategory[];
             labelNewCategory: string;
+            categories: ICategory[];
         },
         thunkAPI
     ) => {
@@ -49,11 +49,11 @@ const addCategory = createAsyncThunk(
                 label: labelNewCategory,
                 read_only: false,
             };
-            categories = [...categories, newCategory];
+            const newMasCategories = [...categories, newCategory];
             const response = await axios.patch<IUser>(
                 `http://localhost:8000/users/${idUser}`,
                 {
-                    categories: categories,
+                    categories: newMasCategories,
                 }
             );
             return response.data.categories;
@@ -80,7 +80,7 @@ const changeNameCategory = createAsyncThunk(
         thunkAPI
     ) => {
         try {
-            categories = categories.map((category: ICategory) => {
+            const newMasCategories = categories.map((category: ICategory) => {
                 if (category.id === idCategory)
                     return {
                         id: category.id,
@@ -92,7 +92,7 @@ const changeNameCategory = createAsyncThunk(
             const response = await axios.patch<IUser>(
                 `http://localhost:8000/users/${idUser}`,
                 {
-                    categories: categories,
+                    categories: newMasCategories,
                 }
             );
             return response.data.categories;
@@ -117,13 +117,13 @@ const deleteCategory = createAsyncThunk(
         thunkAPI
     ) => {
         try {
-            categories = categories.filter(
+            const newMasCategories = categories.filter(
                 (category: ICategory) => category.id !== idCategory
             );
             const response = await axios.patch<IUser>(
                 `http://localhost:8000/users/${idUser}`,
                 {
-                    categories: categories,
+                    categories: newMasCategories,
                 }
             );
             return response.data.categories;

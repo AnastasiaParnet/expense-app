@@ -1,7 +1,7 @@
 export interface ITransaction {
     id: string;
     label: string;
-    date: string;
+    date: Date;
     amount: number;
     id_category: string;
 }

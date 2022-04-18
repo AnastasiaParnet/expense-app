@@ -90,8 +90,8 @@ const FormAddTransaction: React.FC = () => {
                     <DialogTitle>Нова транзакція</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            Зверніть увагу. Відємне значення транзакції є
-                            витратою, додатнє - доходом.
+                            Зверніть увагу. Від`ємне значення транзакції є
+                            витратою, додатне - доходом.
                         </DialogContentText>
                         <TextField
                             fullWidth
