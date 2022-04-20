@@ -3,11 +3,13 @@ import { styled } from '@mui/material/styles';
 import FormChangeTransaction from 'components/Forms/FormChangeTransaction';
 import { dateToString } from 'hooks/date';
 import { ITransaction } from 'models/ITransaction';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface ItemTransactionProps {
     transaction: ITransaction;
-    category: string;
+    labelCategory: string;
+    idExpandTransaction: string;
+    setIdExpandTransaction: (id: string) => void;
 }
 
 const Label = styled('span')({
@@ -33,21 +35,29 @@ const Amount = styled('h1')({
 
 const ItemTransaction: React.FC<ItemTransactionProps> = ({
     transaction,
-    category,
+    labelCategory,
+    idExpandTransaction,
+    setIdExpandTransaction,
 }) => {
     const [expand, setExpand] = useState<boolean>(false);
 
-    const changeExpanded = () => {
-        setExpand((prev) => !prev);
+    const changeExpanded = (id: string) => {
+        if (!expand) setIdExpandTransaction(id);
+        else setIdExpandTransaction('');
     };
+
+    useEffect(() => {
+        if (idExpandTransaction == transaction.id) setExpand(true);
+        else setExpand(false);
+    }, [idExpandTransaction, transaction.id]);
 
     return (
         <Accordion expanded={expand}>
-            <AccordionSummary onClick={changeExpanded}>
+            <AccordionSummary onClick={() => changeExpanded(transaction.id)}>
                 <DivItem>
                     <DivLabel>
                         <Label>{transaction.label}</Label>
-                        <span>{category.toUpperCase()}</span>
+                        <span>{labelCategory.toUpperCase()}</span>
                     </DivLabel>
                     <DivLabel>
                         <Amount>{transaction.amount}</Amount>
@@ -58,7 +68,7 @@ const ItemTransaction: React.FC<ItemTransactionProps> = ({
             <AccordionDetails>
                 <FormChangeTransaction
                     transaction={transaction}
-                    closeForm={changeExpanded}
+                    closeForm={() => changeExpanded(transaction.id)}
                 />
             </AccordionDetails>
         </Accordion>

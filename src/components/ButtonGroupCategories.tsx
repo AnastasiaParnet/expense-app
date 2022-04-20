@@ -56,15 +56,13 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
         arrayIdActualCategories
     );
 
-    const clickDeleteCategory = (idCategory: string, idUser: string | null) => {
+    const clickDeleteCategory = (
+        event: React.MouseEvent<SVGSVGElement>,
+        idCategory: string,
+        idUser: string | null
+    ) => {
+        event.stopPropagation();
         if (idUser) {
-            dispatch(
-                deleteCategory({
-                    idUser,
-                    idCategory,
-                    categories,
-                })
-            );
             const newIdCategoryForTransactions = categories.find(
                 (category) => category.read_only
             )?.id;
@@ -74,6 +72,13 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                     oldIdCategory: idCategory,
                     newIdCategory: newIdCategoryForTransactions || '',
                     transactions,
+                })
+            );
+            dispatch(
+                deleteCategory({
+                    idUser,
+                    idCategory,
+                    categories,
                 })
             );
         }
@@ -113,18 +118,23 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                             >
                                 {category.label}
                                 {isChangeCategory && (
-                                    <div>
+                                    <div
+                                        style={{
+                                            height: '24px',
+                                        }}
+                                    >
                                         <FormEditCategory
                                             id={category.id}
                                             name={category.label}
                                         />
                                         <DeleteIcon
-                                            onClick={() =>
+                                            onClick={(event) => {
                                                 clickDeleteCategory(
+                                                    event,
                                                     category.id,
                                                     idUser
-                                                )
-                                            }
+                                                );
+                                            }}
                                         />
                                     </div>
                                 )}

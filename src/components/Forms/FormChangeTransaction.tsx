@@ -14,7 +14,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import { ICategory } from 'models/ICategory';
 import { ITransaction } from 'models/ITransaction';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { authSelector } from 'store/reducers/AuthSlice';
 import { categorySelector } from 'store/reducers/CategorySlice';
@@ -77,9 +77,17 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
         defaultValues: {
             label: transaction.label,
             amount: transaction.amount,
+            id_category: transaction.id_category,
             date: new Date(transaction.date),
         },
     });
+
+    useEffect(() => {
+        reset({
+            id_category: transaction.id_category,
+            date: new Date(transaction.date),
+        });
+    }, [reset, transaction]);
 
     const clickChangeTransaction = (data: InterfaceChangeTransaction) => {
         if (idUser) {
@@ -99,8 +107,8 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
     };
 
     const cancelChange = () => {
-        closeForm();
         reset();
+        closeForm();
     };
 
     const clickDeleteTransaction = () => {
@@ -136,34 +144,48 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
                 error={errors?.amount ? true : false}
                 helperText={errors?.amount ? 'Введіть число' : ''}
             />
-            <StatFormControl fullWidth size="small" variant="standard">
-                <InputLabel id="category">Назва категорії</InputLabel>
-                <Select
-                    labelId="category"
-                    id="demo-simple-select-standard"
-                    defaultValue={transaction.id_category}
-                    {...register('id_category')}
-                >
-                    {categories.map((category: ICategory) => {
-                        return (
-                            !category.read_only && (
-                                <MenuItem key={category.id} value={category.id}>
-                                    {category.label.toUpperCase()}
-                                </MenuItem>
-                            )
-                        );
-                    })}
-                    {categories.map((category: ICategory) => {
-                        return (
-                            category.read_only && (
-                                <MenuItem key={category.id} value={category.id}>
-                                    <em>{category.label.toUpperCase()}</em>
-                                </MenuItem>
-                            )
-                        );
-                    })}
-                </Select>
-            </StatFormControl>
+            <Controller
+                control={control}
+                name="id_category"
+                render={({ field: { value, onChange } }) => (
+                    <StatFormControl fullWidth size="small" variant="standard">
+                        <InputLabel id="category">Назва категорії</InputLabel>
+                        <Select
+                            labelId="category"
+                            id="demo-simple-select-standard"
+                            value={value}
+                            onChange={onChange}
+                        >
+                            {categories.map((category: ICategory) => {
+                                return (
+                                    !category.read_only && (
+                                        <MenuItem
+                                            key={category.id}
+                                            value={category.id}
+                                        >
+                                            {category.label.toUpperCase()}
+                                        </MenuItem>
+                                    )
+                                );
+                            })}
+                            {categories.map((category: ICategory) => {
+                                return (
+                                    category.read_only && (
+                                        <MenuItem
+                                            key={category.id}
+                                            value={category.id}
+                                        >
+                                            <em>
+                                                {category.label.toUpperCase()}
+                                            </em>
+                                        </MenuItem>
+                                    )
+                                );
+                            })}
+                        </Select>
+                    </StatFormControl>
+                )}
+            />
             <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <Controller
                     control={control}
@@ -176,7 +198,9 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
                             views={['year', 'month', 'day']}
                             value={value}
                             onChange={onChange}
-                            renderInput={(params) => <TextField {...params} />}
+                            renderInput={(params) => (
+                                <StatTextField {...params} />
+                            )}
                         />
                     )}
                 />

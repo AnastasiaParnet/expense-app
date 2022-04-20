@@ -18,6 +18,7 @@ const SmallBox = styled(Box)(({ theme }) => ({
     flexGrow: 1,
     display: 'flex',
     padding: '0',
+    width: '66px',
     [theme.breakpoints.up('xs')]: {
         display: 'flex',
     },
@@ -26,7 +27,7 @@ const SmallBox = styled(Box)(({ theme }) => ({
     },
 }));
 
-const SmallTypography = styled(Typography)(({ theme }) => ({
+const BigTypography = styled(Typography)(({ theme }) => ({
     mr: 2,
     [theme.breakpoints.up('xs')]: {
         display: 'none',
@@ -47,7 +48,7 @@ const BigBox = styled(Box)(({ theme }) => ({
     },
 }));
 
-const BigTypography = styled(Typography)(({ theme }) => ({
+const SmallTypography = styled(Typography)(({ theme }) => ({
     flexGrow: 1,
     [theme.breakpoints.up('xs')]: {
         display: 'flex',
@@ -57,7 +58,7 @@ const BigTypography = styled(Typography)(({ theme }) => ({
     },
 })) as typeof Typography;
 
-const BigButton = styled(Button)({
+const SmallButton = styled(Button)({
     my: 2,
     color: 'white',
     display: 'block',
@@ -115,9 +116,20 @@ const NavbarHome = () => {
 
     return (
         <>
-            <SmallTypography variant="h6" noWrap component="div">
-                Мої фінанси
-            </SmallTypography>
+            <BigTypography variant="h6" noWrap component="div">
+                МОЇ ФІНАНСИ
+            </BigTypography>
+            <BigBox>
+                {pages.map((page) => (
+                    <SmallButton key={page.link} onClick={handleCloseNavMenu}>
+                        {location.pathname == page.link ? (
+                            <ActiveLink to={page.link}>{page.name}</ActiveLink>
+                        ) : (
+                            <StatLink to={page.link}>{page.name}</StatLink>
+                        )}
+                    </SmallButton>
+                ))}
+            </BigBox>
             <SmallBox>
                 <IconButton
                     size="large"
@@ -161,20 +173,9 @@ const NavbarHome = () => {
                     ))}
                 </StatMenu>
             </SmallBox>
-            <BigTypography variant="h6" noWrap component="div">
-                Мої фінанси
-            </BigTypography>
-            <BigBox>
-                {pages.map((page) => (
-                    <BigButton key={page.link} onClick={handleCloseNavMenu}>
-                        {location.pathname == page.link ? (
-                            <ActiveLink to={page.link}>{page.name}</ActiveLink>
-                        ) : (
-                            <StatLink to={page.link}>{page.name}</StatLink>
-                        )}
-                    </BigButton>
-                ))}
-            </BigBox>
+            <SmallTypography variant="h6" noWrap component="div">
+                МОЇ ФІНАНСИ
+            </SmallTypography>
             <Box>
                 <Button color="inherit" onClick={logOut}>
                     Вийти

@@ -25,15 +25,18 @@ const FormEditCategory: React.FC<FormEditCategoryProps> = ({ id, name }) => {
     const [label, setLabel] = useState<string>(name.toUpperCase());
     const [open, setOpen] = useState<boolean>(false);
 
-    const handleClickOpen = () => {
+    const handleClickOpen = (event: React.MouseEvent<SVGSVGElement>) => {
+        event.stopPropagation();
         setOpen(true);
     };
 
-    const handleClose = () => {
+    const handleClose = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
         setOpen(false);
     };
 
-    const clickEditCategory = () => {
+    const clickEditCategory = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
         if (idUser && label) {
             const data = {
                 idUser,
@@ -50,7 +53,7 @@ const FormEditCategory: React.FC<FormEditCategoryProps> = ({ id, name }) => {
         <>
             <EditIcon onClick={handleClickOpen} />
             <Dialog open={open} onClose={handleClose}>
-                <form>
+                <form onClick={(e) => e.stopPropagation()}>
                     <DialogTitle>Зміна назви категорії</DialogTitle>
                     <DialogContent>
                         <TextField

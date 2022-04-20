@@ -1,6 +1,7 @@
 import { Pagination, TextField } from '@mui/material';
 import { styled } from '@mui/system';
 import ItemTransaction from 'components/ItemTransaction';
+import { useDebounce } from 'hooks/react';
 import { useAppSelector } from 'hooks/redux';
 import { ICategory } from 'models/ICategory';
 import { ITransaction } from 'models/ITransaction';
@@ -8,14 +9,19 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { categorySelector } from 'store/reducers/CategorySlice';
 import { transactionSelector } from 'store/reducers/TransactionSlice';
 
-const DivGrid = styled('div')({
+const DivGrid = styled('div')(({ theme }) => ({
     display: 'grid',
-    height: '70vh',
     gridTemplateRows: 'auto 1fr auto',
     gridRowGap: '10px',
     justifyItems: 'center',
     alignItems: 'start',
-});
+    [theme.breakpoints.up('xs')]: {
+        height: '63vh',
+    },
+    [theme.breakpoints.up('md')]: {
+        height: '73vh',
+    },
+}));
 
 const DivList = styled('div')({
     width: '100%',
@@ -35,7 +41,11 @@ const ListTransactions: React.FC = () => {
     const [masTransactions, setMasTransactions] = useState<ITransaction[]>([]);
     const [pageNow, setPageNow] = useState<number>(1);
     const [countPage, setCountPage] = useState<number>(1);
-    const [search, setSearch] = useState<string>('');
+    const [inputSearch, setInputSearch] = useState<string>('');
+    const [idExpandTransaction, setIdExpandTransaction] = useState<string>('');
+
+    const debouncedSearch = useDebounce(inputSearch, 300);
+
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setPageNow(value);
     };
@@ -50,17 +60,17 @@ const ListTransactions: React.FC = () => {
 
     const filterTransaction = useCallback(
         (transaction: ITransaction) => {
-            const searchLowerCase = search.toLowerCase();
+            const searchLowerCase = debouncedSearch.toLowerCase();
             return (
                 (arrayIdActualCategories.length == 0 ||
                     arrayIdActualCategories.includes(
                         transaction.id_category
                     )) &&
-                (!search ||
+                (!debouncedSearch ||
                     transaction.label.toLowerCase().includes(searchLowerCase))
             );
         },
-        [arrayIdActualCategories, search]
+        [arrayIdActualCategories, debouncedSearch]
     );
 
     const sortedTransaction = (tran1: ITransaction, tran2: ITransaction) => {
@@ -72,9 +82,11 @@ const ListTransactions: React.FC = () => {
     useEffect(() => {
         let newMasTransactions: ITransaction[] =
             transactions.filter(filterTransaction);
-        setCountPage(
-            Math.ceil(newMasTransactions.length / countTransactionsOnPage)
+        const newCountPage = Math.ceil(
+            newMasTransactions.length / countTransactionsOnPage
         );
+        setCountPage(newCountPage);
+        if (newCountPage < pageNow) setPageNow(1);
         newMasTransactions = newMasTransactions
             .sort(sortedTransaction)
             .slice(
@@ -82,13 +94,7 @@ const ListTransactions: React.FC = () => {
                 pageNow * countTransactionsOnPage
             );
         setMasTransactions(newMasTransactions);
-    }, [
-        arrayIdActualCategories,
-        filterTransaction,
-        pageNow,
-        search,
-        transactions,
-    ]);
+    }, [arrayIdActualCategories, filterTransaction, pageNow, transactions]);
 
     return (
         <DivGrid>
@@ -98,14 +104,16 @@ const ListTransactions: React.FC = () => {
                 id="outlined-basic"
                 label="Пошук транзакції по назві"
                 variant="outlined"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={inputSearch}
+                onChange={(e) => setInputSearch(e.target.value)}
             />
             <DivList>
                 {masTransactions.map((tran: ITransaction) => (
                     <ItemTransaction
                         transaction={tran}
-                        category={nameCategory(tran.id_category)}
+                        labelCategory={nameCategory(tran.id_category)}
+                        idExpandTransaction={idExpandTransaction}
+                        setIdExpandTransaction={setIdExpandTransaction}
                         key={tran.id}
                     ></ItemTransaction>
                 ))}
