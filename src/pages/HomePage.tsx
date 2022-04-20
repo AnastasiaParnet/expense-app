@@ -1,3 +1,4 @@
+import { Box, styled } from '@mui/system';
 import NavbarBase from 'components/Navbar/NavbarBase';
 import NavbarHome from 'components/Navbar/NavbarHome';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
@@ -9,6 +10,14 @@ import { initializationCategories } from 'store/reducers/CategorySlice';
 import { initializationTransactions } from 'store/reducers/TransactionSlice';
 import Graphics from './Graphics';
 import Main from './Main';
+
+const HomeBox = styled(Box)({
+    width: '100vw',
+    height: '100vh',
+    overflow: 'hidden',
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr',
+});
 
 export const HomePage: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -22,7 +31,7 @@ export const HomePage: React.FC = () => {
     }, [dispatch, idUser]);
 
     return (
-        <>
+        <HomeBox>
             <NavbarBase>
                 <NavbarHome />
             </NavbarBase>
@@ -31,6 +40,6 @@ export const HomePage: React.FC = () => {
                 <Route path={GRAPHICS_SCREEN} element={<Graphics />} />
                 <Route path="*" element={<Navigate to={MAIN_SCREEN} />} />
             </Routes>
-        </>
+        </HomeBox>
     );
 };

@@ -9,14 +9,18 @@ interface BaseBoxProps {
 }
 
 const BoxMain = styled(Box)(({ theme }) => ({
-    display: 'flex',
+    display: 'grid',
     padding: '3%',
-    justifyContent: 'space-between',
+    overflow: 'auto',
     [theme.breakpoints.up('xs')]: {
-        flexDirection: 'column',
+        gridTemplateColumns: '1fr',
+        gridTemplateRows: 'auto 1fr',
+        gridRowGap: '20px',
     },
     [theme.breakpoints.up('md')]: {
-        flexDirection: 'row',
+        gridTemplateColumns: 'auto 1fr',
+        gridTemplateRows: '1fr',
+        gridColumnGap: '50px',
         margin: '0 0 0 5%',
     },
     [theme.breakpoints.up('lg')]: {
@@ -27,22 +31,13 @@ const BoxMain = styled(Box)(({ theme }) => ({
     },
 }));
 
-const BoxCategories = styled(Box)(({ theme }) => ({
-    [theme.breakpoints.up('xs')]: {
-        margin: '5px 0 20px 0',
-    },
-    [theme.breakpoints.up('md')]: {
-        margin: '0 50px 0 0',
-    },
-}));
-
 const BaseBox: React.FC<BaseBoxProps> = ({ children, isChangeCategory }) => {
     return (
         <BoxMain>
-            <BoxCategories>
+            <Box>
                 <ListCategories isChangeCategory={isChangeCategory} />
                 {isChangeCategory && <FormAddCategory />}
-            </BoxCategories>
+            </Box>
             {children}
         </BoxMain>
     );

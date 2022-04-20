@@ -81,6 +81,12 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                     categories,
                 })
             );
+            if (arrayIdActualCategories.includes(idCategory)) {
+                const newActualCategories = actualCategories.filter(
+                    (category) => category !== idCategory
+                );
+                setActualCategories(newActualCategories);
+            }
         }
     };
 

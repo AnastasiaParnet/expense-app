@@ -12,7 +12,9 @@ const Header = styled('h1')(({ theme }) => ({
 }));
 
 const BoxTransactions = styled(Box)({
-    width: '100%',
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr',
+    overflow: 'auto',
 });
 
 const DivTransactions = styled('div')({

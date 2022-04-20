@@ -9,23 +9,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { categorySelector } from 'store/reducers/CategorySlice';
 import { transactionSelector } from 'store/reducers/TransactionSlice';
 
-const DivGrid = styled('div')(({ theme }) => ({
+const DivGrid = styled('div')({
     display: 'grid',
     gridTemplateRows: 'auto 1fr auto',
     gridRowGap: '10px',
-    justifyItems: 'center',
-    alignItems: 'start',
-    [theme.breakpoints.up('xs')]: {
-        height: '63vh',
-    },
-    [theme.breakpoints.up('md')]: {
-        height: '73vh',
-    },
-}));
+    overflow: 'auto',
+});
 
 const DivList = styled('div')({
-    width: '100%',
-    height: '100%',
     overflow: 'auto',
 });
 
@@ -33,8 +24,13 @@ const SearchTextField = styled(TextField)({
     margin: '10px 0',
 });
 
+const StatPagination = styled(Pagination)({
+    display: 'flex',
+    justifyContent: 'center',
+});
+
 const ListTransactions: React.FC = () => {
-    const countTransactionsOnPage = 2;
+    const countTransactionsOnPage = 3;
     const { arrayIdActualCategories, categories } =
         useAppSelector(categorySelector);
     const { transactions } = useAppSelector(transactionSelector);
@@ -118,7 +114,7 @@ const ListTransactions: React.FC = () => {
                     ></ItemTransaction>
                 ))}
             </DivList>
-            <Pagination
+            <StatPagination
                 count={countPage}
                 page={pageNow}
                 variant="outlined"
