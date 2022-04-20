@@ -1,4 +1,4 @@
-import { styled } from '@mui/system';
+import { Box, styled } from '@mui/system';
 import { dateToString } from 'hooks/date';
 import { useAppSelector } from 'hooks/redux';
 import { ITransaction } from 'models/ITransaction';
@@ -20,7 +20,7 @@ interface IDataForGraphic {
     amount: number;
 }
 
-const DivChart = styled('div')({
+const BoxChart = styled(Box)({
     width: '90%',
     height: 400,
 });
@@ -75,7 +75,7 @@ const Chart: React.FC = () => {
     if (dataForGraphic.length == 0) return <></>;
 
     return (
-        <DivChart>
+        <BoxChart>
             <ResponsiveContainer>
                 <AreaChart data={dataForGraphic}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -110,7 +110,7 @@ const Chart: React.FC = () => {
                     />
                 </AreaChart>
             </ResponsiveContainer>
-        </DivChart>
+        </BoxChart>
     );
 };
 

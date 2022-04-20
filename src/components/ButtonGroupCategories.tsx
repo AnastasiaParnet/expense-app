@@ -1,6 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { styled } from '@mui/system';
+import { Box, styled } from '@mui/system';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import { ICategory } from 'models/ICategory';
 import React, { useEffect, useState } from 'react';
@@ -124,7 +124,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                             >
                                 {category.label}
                                 {isChangeCategory && (
-                                    <div
+                                    <Box
                                         style={{
                                             height: '24px',
                                         }}
@@ -142,7 +142,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                                                 );
                                             }}
                                         />
-                                    </div>
+                                    </Box>
                                 )}
                             </ToggleButtonChange>
                         )

@@ -17,7 +17,7 @@ const BoxTransactions = styled(Box)({
     overflow: 'auto',
 });
 
-const DivTransactions = styled('div')({
+const BoxTitle = styled(Box)({
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
@@ -27,10 +27,10 @@ const Main: React.FC = () => {
     return (
         <BaseBox isChangeCategory={true}>
             <BoxTransactions>
-                <DivTransactions>
+                <BoxTitle>
                     <Header>Список транзакцій</Header>
                     <FormAddTransaction />
-                </DivTransactions>
+                </BoxTitle>
                 <ListTransactions />
             </BoxTransactions>
         </BaseBox>

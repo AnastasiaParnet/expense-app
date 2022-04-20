@@ -1,18 +1,16 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, TextField } from '@mui/material';
 import { Box, styled } from '@mui/system';
+import axios from 'axios';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { MAIN_SCREEN, REGISTRATION_PATH } from 'routes';
-import {
-    authorizationUserByNameAndPassword,
-    authSelector,
-} from 'store/reducers/AuthSlice';
+import { LOGIN_PATH, MAIN_SCREEN } from 'routes';
+import { authSelector, registrationUser } from 'store/reducers/AuthSlice';
 import * as yup from 'yup';
 
-interface InterfaceLogIn {
+interface InterfaceRegistration {
     username: string;
     password: string;
 }
@@ -37,15 +35,16 @@ const validationSchema = yup.object({
     password: yup.string().min(4).max(16).required('Введіть пароль'),
 });
 
-const FormLogIn: React.FC = () => {
+const FormRegistration = () => {
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
     const navigate = useNavigate();
     const {
         register,
         handleSubmit,
-        formState: { errors },
-    } = useForm<InterfaceLogIn>({
+        formState: { errors, isSubmitted },
+        getValues,
+    } = useForm<InterfaceRegistration>({
         mode: 'onChange',
         resolver: yupResolver(validationSchema),
     });
@@ -54,17 +53,26 @@ const FormLogIn: React.FC = () => {
         if (idUser) navigate(MAIN_SCREEN);
     }, [idUser, navigate]);
 
-    const submitForm = (data: InterfaceLogIn) => {
-        dispatch(authorizationUserByNameAndPassword(data));
+    const isUniqueUsername = async (username: string) => {
+        const response = await axios.get(
+            `http://localhost:8000/users?username=${username}`
+        );
+        return response.data.length == 0;
     };
 
-    const redirectToRegistration = () => {
-        navigate(REGISTRATION_PATH);
+    const clickRegistration = async (data: InterfaceRegistration) => {
+        const uniqueUsername = await isUniqueUsername(data.username);
+        if (uniqueUsername) dispatch(registrationUser(data));
+        else alert('Такий користувач вже існує, спробуйте щось інше');
+    };
+
+    const redirectToLogIn = () => {
+        navigate(LOGIN_PATH);
     };
 
     return (
         <Form>
-            <Title style={{ textAlign: 'center' }}>Вхід</Title>
+            <Title>Реєстрація</Title>
             <BoxInput>
                 <TextField
                     label="Ім'я користувача"
@@ -94,20 +102,17 @@ const FormLogIn: React.FC = () => {
             </BoxInput>
             <BoxInput>
                 <Button
-                    sx={{ width: '150px' }}
                     variant="contained"
-                    onClick={handleSubmit(submitForm)}
+                    onClick={handleSubmit(clickRegistration)}
                 >
-                    Ввійти
+                    Зареєструватись
                 </Button>
             </BoxInput>
             <BoxInput>
-                <Button onClick={redirectToRegistration}>
-                    Зареєструватись
-                </Button>
+                <Button onClick={redirectToLogIn}>Повернутись назад</Button>
             </BoxInput>
         </Form>
     );
 };
 
-export default FormLogIn;
+export default FormRegistration;

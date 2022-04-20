@@ -7,7 +7,7 @@ import {
     Select,
     TextField,
 } from '@mui/material';
-import { styled } from '@mui/system';
+import { Box, styled } from '@mui/system';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -45,7 +45,7 @@ const StatFormControl = styled(FormControl)({
     margin: '10px 0',
 });
 
-const DivButton = styled('div')({
+const BoxButton = styled(Box)({
     display: 'flex',
     justifyContent: 'space-between',
 });
@@ -205,8 +205,8 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
                     )}
                 />
             </LocalizationProvider>
-            <DivButton>
-                <div>
+            <BoxButton>
+                <Box>
                     <Button
                         disabled={!isDirty}
                         onClick={handleSubmit(clickChangeTransaction)}
@@ -216,9 +216,9 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
                     <Button disabled={!isDirty} onClick={cancelChange}>
                         Відмінити зміни
                     </Button>
-                </div>
+                </Box>
                 <Button onClick={clickDeleteTransaction}>Видалити</Button>
-            </DivButton>
+            </BoxButton>
         </form>
     );
 };

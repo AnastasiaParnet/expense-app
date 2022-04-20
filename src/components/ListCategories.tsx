@@ -7,7 +7,7 @@ interface ListCategoriesProps {
     isChangeCategory: boolean;
 }
 
-const StatDiv = styled('div')(({ theme }) => ({
+const StatBox = styled(Box)(({ theme }) => ({
     display: 'flex',
     [theme.breakpoints.up('xs')]: {
         flexDirection: 'row',
@@ -70,7 +70,7 @@ const ListCategories: React.FC<ListCategoriesProps> = ({
     };
 
     return (
-        <StatDiv>
+        <StatBox>
             <Box>
                 <SmallBox>
                     <StatToggleButton value="" onClick={handleOpenNavMenu}>
@@ -95,7 +95,7 @@ const ListCategories: React.FC<ListCategoriesProps> = ({
                     />
                 </BigBox>
             </Box>
-        </StatDiv>
+        </StatBox>
     );
 };
 

@@ -1,5 +1,5 @@
 import { Pagination, TextField } from '@mui/material';
-import { styled } from '@mui/system';
+import { Box, styled } from '@mui/system';
 import ItemTransaction from 'components/ItemTransaction';
 import { useDebounce } from 'hooks/react';
 import { useAppSelector } from 'hooks/redux';
@@ -9,14 +9,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { categorySelector } from 'store/reducers/CategorySlice';
 import { transactionSelector } from 'store/reducers/TransactionSlice';
 
-const DivGrid = styled('div')({
+const BoxGrid = styled(Box)({
     display: 'grid',
     gridTemplateRows: 'auto 1fr auto',
     gridRowGap: '10px',
     overflow: 'auto',
 });
 
-const DivList = styled('div')({
+const BoxList = styled(Box)({
     overflow: 'auto',
 });
 
@@ -93,7 +93,7 @@ const ListTransactions: React.FC = () => {
     }, [arrayIdActualCategories, filterTransaction, pageNow, transactions]);
 
     return (
-        <DivGrid>
+        <BoxGrid>
             <SearchTextField
                 fullWidth
                 size="small"
@@ -103,7 +103,7 @@ const ListTransactions: React.FC = () => {
                 value={inputSearch}
                 onChange={(e) => setInputSearch(e.target.value)}
             />
-            <DivList>
+            <BoxList>
                 {masTransactions.map((tran: ITransaction) => (
                     <ItemTransaction
                         transaction={tran}
@@ -113,7 +113,7 @@ const ListTransactions: React.FC = () => {
                         key={tran.id}
                     ></ItemTransaction>
                 ))}
-            </DivList>
+            </BoxList>
             <StatPagination
                 count={countPage}
                 page={pageNow}
@@ -121,7 +121,7 @@ const ListTransactions: React.FC = () => {
                 color="primary"
                 onChange={handleChange}
             />
-        </DivGrid>
+        </BoxGrid>
     );
 };
 

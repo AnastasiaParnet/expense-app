@@ -4,11 +4,11 @@ import BaseBox from 'components/BaseBox';
 import Chart from 'components/Chart';
 import React from 'react';
 
-const BoxChart = styled(Box)(({ theme }) => ({
+const BoxChart = styled(Box)({
     height: '100%',
     margin: '10px',
     width: '100%',
-}));
+});
 
 const Graphics: React.FC = () => {
     return (

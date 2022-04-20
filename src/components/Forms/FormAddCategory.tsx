@@ -6,6 +6,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
+import { Box } from '@mui/system';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -63,7 +64,7 @@ const FormAddCategory: React.FC = () => {
     };
 
     return (
-        <div>
+        <Box>
             <Button variant="text" onClick={handleClickOpenForm}>
                 <AddIcon />
                 Додати категорію
@@ -93,7 +94,7 @@ const FormAddCategory: React.FC = () => {
                     </DialogActions>
                 </form>
             </Dialog>
-        </div>
+        </Box>
     );
 };
 

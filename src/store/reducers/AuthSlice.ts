@@ -7,11 +7,14 @@ import {
 import axios from 'axios';
 import crypto from 'crypto-js';
 import { IUser } from 'models/IUser';
+import { v1 as uuidv1, v4 as uuidv4 } from 'uuid';
 import { AppDispatch, RootState } from '../store';
 
 interface AuthState {
     idUser: string | null;
 }
+
+const secret_key = 'secret_key';
 
 const authorizationUserByNameAndPassword = createAsyncThunk(
     'user/authUserByPassword',
@@ -24,7 +27,7 @@ const authorizationUserByNameAndPassword = createAsyncThunk(
                 `http://localhost:8000/users?username=${username}`
             );
             const user = response.data[0];
-            const bytes = crypto.AES.decrypt(user.password, 'secret_key');
+            const bytes = crypto.AES.decrypt(user.password, secret_key);
             const decryptedPassword = bytes.toString(crypto.enc.Utf8);
             if (decryptedPassword === password) {
                 localStorage.setItem('token', user.token);
@@ -47,6 +50,35 @@ const authorizationUserByToken = createAsyncThunk(
             const user = response.data[0];
             if (user) return user.id;
             return null;
+        } catch (e) {
+            return thunkAPI.rejectWithValue('Не вдалося знайти користувача');
+        }
+    }
+);
+
+const registrationUser = createAsyncThunk(
+    'user/registration',
+    async (
+        { username, password }: { username: string; password: string },
+        thunkAPI
+    ) => {
+        try {
+            const encryptPassword = crypto.AES.encrypt(
+                password,
+                secret_key
+            ).toString();
+            const response = await axios.post<IUser>(
+                `http://localhost:8000/users`,
+                {
+                    id: uuidv4(),
+                    username,
+                    password: encryptPassword,
+                    token: uuidv1(),
+                }
+            );
+            const user = response.data;
+            localStorage.setItem('token', user.token);
+            return user.id;
         } catch (e) {
             return thunkAPI.rejectWithValue('Не вдалося знайти користувача');
         }
@@ -82,6 +114,12 @@ const authSlice = createSlice({
         ) => {
             state.idUser = action.payload;
         },
+        [registrationUser.fulfilled.type]: (
+            state,
+            action: PayloadAction<string>
+        ) => {
+            state.idUser = action.payload;
+        },
     },
 });
 
@@ -96,5 +134,6 @@ export {
     authSelector,
     authorizationUserByNameAndPassword,
     authorizationUserByToken,
+    registrationUser,
     clearUser,
 };

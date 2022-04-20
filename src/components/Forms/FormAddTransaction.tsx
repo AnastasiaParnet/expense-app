@@ -13,6 +13,7 @@ import {
     Select,
     TextField,
 } from '@mui/material';
+import { Box } from '@mui/system';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import { ICategory } from 'models/ICategory';
 import React, { useState } from 'react';
@@ -81,7 +82,7 @@ const FormAddTransaction: React.FC = () => {
     };
 
     return (
-        <div>
+        <Box>
             <Button variant="outlined" onClick={handleClickOpen}>
                 Додати транзакцію
             </Button>
@@ -169,7 +170,7 @@ const FormAddTransaction: React.FC = () => {
                     </DialogActions>
                 </form>
             </Dialog>
-        </div>
+        </Box>
     );
 };
 

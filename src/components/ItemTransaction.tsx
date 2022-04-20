@@ -1,5 +1,6 @@
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { Box } from '@mui/system';
 import FormChangeTransaction from 'components/Forms/FormChangeTransaction';
 import { dateToString } from 'hooks/date';
 import { ITransaction } from 'models/ITransaction';
@@ -16,13 +17,13 @@ const Label = styled('span')({
     fontSize: '18px',
 });
 
-const DivItem = styled('div')({
+const BoxItem = styled(Box)({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
 });
 
-const DivLabel = styled('div')({
+const BoxLabel = styled(Box)({
     display: 'flex',
     justifyContent: 'space-between',
     fontFamily: 'Arial, Helvetica, sans-serif',
@@ -54,16 +55,16 @@ const ItemTransaction: React.FC<ItemTransactionProps> = ({
     return (
         <Accordion expanded={expand}>
             <AccordionSummary onClick={() => changeExpanded(transaction.id)}>
-                <DivItem>
-                    <DivLabel>
+                <BoxItem>
+                    <BoxLabel>
                         <Label>{transaction.label}</Label>
                         <span>{labelCategory.toUpperCase()}</span>
-                    </DivLabel>
-                    <DivLabel>
+                    </BoxLabel>
+                    <BoxLabel>
                         <Amount>{transaction.amount}</Amount>
                         <span>{dateToString(transaction.date)}</span>
-                    </DivLabel>
-                </DivItem>
+                    </BoxLabel>
+                </BoxItem>
             </AccordionSummary>
             <AccordionDetails>
                 <FormChangeTransaction
