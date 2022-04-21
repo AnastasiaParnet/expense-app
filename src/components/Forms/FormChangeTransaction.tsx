@@ -21,7 +21,6 @@ import { categorySelector } from 'store/reducers/CategorySlice';
 import {
     changeTransaction,
     deleteTransaction,
-    transactionSelector,
 } from 'store/reducers/TransactionSlice';
 import * as yup from 'yup';
 
@@ -63,7 +62,6 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
     const { categories } = useAppSelector(categorySelector);
-    const { transactions } = useAppSelector(transactionSelector);
 
     const {
         control,
@@ -94,12 +92,12 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
             const newDataTransaction: ITransaction = {
                 ...data,
                 id: transaction.id,
+                id_user: idUser,
             };
             dispatch(
                 changeTransaction({
                     idUser,
                     newDataTransaction,
-                    transactions,
                 })
             );
         }
@@ -116,7 +114,6 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
             const dataForDelete = {
                 idUser,
                 idTransaction: transaction.id,
-                transactions,
             };
             dispatch(deleteTransaction(dataForDelete));
         }

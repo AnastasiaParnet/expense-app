@@ -10,11 +10,11 @@ import { IUser } from 'models/IUser';
 import { v1 as uuidv1, v4 as uuidv4 } from 'uuid';
 import { AppDispatch, RootState } from '../store';
 
+const secret_key = 'secret_key';
+
 interface AuthState {
     idUser: string | null;
 }
-
-const secret_key = 'secret_key';
 
 const authorizationUserByNameAndPassword = createAsyncThunk(
     'user/authUserByPassword',

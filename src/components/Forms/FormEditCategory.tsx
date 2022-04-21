@@ -8,10 +8,7 @@ import TextField from '@mui/material/TextField';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import React, { useState } from 'react';
 import { authSelector } from 'store/reducers/AuthSlice';
-import {
-    categorySelector,
-    changeNameCategory,
-} from 'store/reducers/CategorySlice';
+import { changeNameCategory } from 'store/reducers/CategorySlice';
 
 interface FormEditCategoryProps {
     id: string;
@@ -20,7 +17,6 @@ interface FormEditCategoryProps {
 
 const FormEditCategory: React.FC<FormEditCategoryProps> = ({ id, name }) => {
     const { idUser } = useAppSelector(authSelector);
-    const { categories } = useAppSelector(categorySelector);
     const dispatch = useAppDispatch();
     const [label, setLabel] = useState<string>(name.toUpperCase());
     const [open, setOpen] = useState<boolean>(false);
@@ -42,7 +38,6 @@ const FormEditCategory: React.FC<FormEditCategoryProps> = ({ id, name }) => {
                 idUser,
                 idCategory: id,
                 newLabel: label,
-                categories,
             };
             dispatch(changeNameCategory(data));
             setOpen(false);

@@ -5,7 +5,7 @@ import { useDebounce } from 'hooks/react';
 import { useAppSelector } from 'hooks/redux';
 import { ICategory } from 'models/ICategory';
 import { ITransaction } from 'models/ITransaction';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { categorySelector } from 'store/reducers/CategorySlice';
 import { transactionSelector } from 'store/reducers/TransactionSlice';
 
@@ -54,43 +54,43 @@ const ListTransactions: React.FC = () => {
         return '';
     };
 
-    const filterTransaction = useCallback(
-        (transaction: ITransaction) => {
-            const searchLowerCase = debouncedSearch.toLowerCase();
-            return (
-                (arrayIdActualCategories.length == 0 ||
-                    arrayIdActualCategories.includes(
-                        transaction.id_category
-                    )) &&
-                (!debouncedSearch ||
-                    transaction.label.toLowerCase().includes(searchLowerCase))
-            );
-        },
-        [arrayIdActualCategories, debouncedSearch]
-    );
+    // const filterTransaction = useCallback(
+    //     (transaction: ITransaction) => {
+    //         const searchLowerCase = debouncedSearch.toLowerCase();
+    //         return (
+    //             (arrayIdActualCategories.length == 0 ||
+    //                 arrayIdActualCategories.includes(
+    //                     transaction.id_category
+    //                 )) &&
+    //             (!debouncedSearch ||
+    //                 transaction.label.toLowerCase().includes(searchLowerCase))
+    //         );
+    //     },
+    //     [arrayIdActualCategories, debouncedSearch]
+    // );
 
-    const sortedTransaction = (tran1: ITransaction, tran2: ITransaction) => {
-        const date1 = new Date(tran1.date);
-        const date2 = new Date(tran2.date);
-        return date2.getTime() - date1.getTime();
-    };
+    // const sortedTransaction = (tran1: ITransaction, tran2: ITransaction) => {
+    //     const date1 = new Date(tran1.date);
+    //     const date2 = new Date(tran2.date);
+    //     return date2.getTime() - date1.getTime();
+    // };
 
-    useEffect(() => {
-        let newMasTransactions: ITransaction[] =
-            transactions.filter(filterTransaction);
-        const newCountPage = Math.ceil(
-            newMasTransactions.length / countTransactionsOnPage
-        );
-        setCountPage(newCountPage);
-        if (newCountPage < pageNow) setPageNow(1);
-        newMasTransactions = newMasTransactions
-            .sort(sortedTransaction)
-            .slice(
-                (pageNow - 1) * countTransactionsOnPage,
-                pageNow * countTransactionsOnPage
-            );
-        setMasTransactions(newMasTransactions);
-    }, [arrayIdActualCategories, filterTransaction, pageNow, transactions]);
+    // useEffect(() => {
+    //     let newMasTransactions: ITransaction[] =
+    //         transactions.filter(filterTransaction);
+    //     const newCountPage = Math.ceil(
+    //         newMasTransactions.length / countTransactionsOnPage
+    //     );
+    //     setCountPage(newCountPage);
+    //     if (newCountPage < pageNow) setPageNow(1);
+    //     newMasTransactions = newMasTransactions
+    //         .sort(sortedTransaction)
+    //         .slice(
+    //             (pageNow - 1) * countTransactionsOnPage,
+    //             pageNow * countTransactionsOnPage
+    //         );
+    //     setMasTransactions(newMasTransactions);
+    // }, [arrayIdActualCategories, filterTransaction, pageNow, transactions]);
 
     return (
         <BoxGrid>
@@ -104,7 +104,7 @@ const ListTransactions: React.FC = () => {
                 onChange={(e) => setInputSearch(e.target.value)}
             />
             <BoxList>
-                {masTransactions.map((tran: ITransaction) => (
+                {transactions.map((tran: ITransaction) => (
                     <ItemTransaction
                         transaction={tran}
                         labelCategory={nameCategory(tran.id_category)}

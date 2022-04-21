@@ -4,4 +4,5 @@ export interface ITransaction {
     date: Date;
     amount: number;
     id_category: string;
+    id_user: string;
 }

@@ -55,7 +55,6 @@ const FormAddCategory: React.FC = () => {
             const dataForAdd = {
                 idUser,
                 labelNewCategory: inputLabel,
-                categories,
             };
             dispatch(addCategory(dataForAdd));
         }

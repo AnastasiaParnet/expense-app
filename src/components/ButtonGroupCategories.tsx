@@ -10,10 +10,7 @@ import {
     changeActualCategories,
     deleteCategory,
 } from 'store/reducers/CategorySlice';
-import {
-    changeCategoryForTransactions,
-    transactionSelector,
-} from 'store/reducers/TransactionSlice';
+import { changeCategoryForTransactions } from 'store/reducers/TransactionSlice';
 import FormEditCategory from './Forms/FormEditCategory';
 
 interface ButtonGroupCategoriesProps {
@@ -49,7 +46,6 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
 }) => {
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
-    const { transactions } = useAppSelector(transactionSelector);
     const { categories, arrayIdActualCategories } =
         useAppSelector(categorySelector);
     const [actualCategories, setActualCategories] = useState<string[]>(
@@ -71,14 +67,12 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                     idUser,
                     oldIdCategory: idCategory,
                     newIdCategory: newIdCategoryForTransactions || '',
-                    transactions,
                 })
             );
             dispatch(
                 deleteCategory({
                     idUser,
                     idCategory,
-                    categories,
                 })
             );
             if (arrayIdActualCategories.includes(idCategory)) {

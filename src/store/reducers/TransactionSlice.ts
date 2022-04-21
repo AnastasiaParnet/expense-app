@@ -5,7 +5,6 @@ import {
     PayloadAction,
 } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { IUser } from 'models/IUser';
 import { AppDispatch, RootState } from 'store/store';
 import { v4 as uuidv4 } from 'uuid';
 import { ITransaction } from '../../models/ITransaction';
@@ -18,12 +17,21 @@ const initializationTransactions = createAsyncThunk(
     'transaction/initialization',
     async (idUser: string, thunkAPI) => {
         try {
-            const response = await axios.get<IUser>(
-                `http://localhost:8000/users/${idUser}`
+            const response = await axios.get<ITransaction[]>(
+                `http://localhost:8000/transactions`,
+                {
+                    params: {
+                        id_user: idUser,
+                        _sort: 'date',
+                        _order: 'desc',
+                    },
+                }
             );
-            return response.data.transactions;
+            return response.data;
         } catch (e) {
-            return thunkAPI.rejectWithValue('Не вдалося');
+            return thunkAPI.rejectWithValue(
+                'Не вдалося ініціалізувати транзакції'
+            );
         }
     }
 );
@@ -36,34 +44,31 @@ const addTransaction = createAsyncThunk(
             label,
             amount,
             idCategory,
-            transactions,
         }: {
             idUser: string;
             label: string;
             amount: number;
             idCategory: string;
-            transactions: ITransaction[];
         },
         thunkAPI
     ) => {
         try {
+            const date = new Date(new Date().setHours(0, 0, 0, 0));
             const newTransaction: ITransaction = {
                 id: uuidv4(),
                 label,
-                date: new Date(),
+                date,
                 amount,
                 id_category: idCategory,
+                id_user: idUser,
             };
-            const newMasTransactions = [...transactions, newTransaction];
-            const response = await axios.patch<IUser>(
-                `http://localhost:8000/users/${idUser}`,
-                {
-                    transactions: newMasTransactions,
-                }
+            const response = await axios.post<ITransaction>(
+                `http://localhost:8000/transactions`,
+                newTransaction
             );
-            return response.data.transactions;
+            return response.data;
         } catch (e) {
-            return thunkAPI.rejectWithValue('Не вдалося');
+            return thunkAPI.rejectWithValue('Не вдалося додати транзакцію');
         }
     }
 );
@@ -75,36 +80,47 @@ const changeCategoryForTransactions = createAsyncThunk(
             idUser,
             oldIdCategory,
             newIdCategory,
-            transactions,
         }: {
             idUser: string;
             oldIdCategory: string;
             newIdCategory: string;
-            transactions: ITransaction[];
         },
         thunkAPI
     ) => {
         try {
-            const newMasTransactions = transactions.map(
-                (transaction: ITransaction) => {
-                    if (transaction.id_category == oldIdCategory) {
-                        return {
-                            ...transaction,
-                            id_category: newIdCategory,
-                        };
-                    }
-                    return transaction;
-                }
-            );
-            const response = await axios.patch<IUser>(
-                `http://localhost:8000/users/${idUser}`,
+            const response_transactions = await axios.get<ITransaction[]>(
+                'http://localhost:8000/transactions',
                 {
-                    transactions: newMasTransactions,
+                    params: {
+                        id_user: idUser,
+                        id_category: oldIdCategory,
+                    },
                 }
             );
-            return response.data.transactions;
+            const transactions = response_transactions.data;
+            for (const tran of transactions) {
+                await axios.patch<ITransaction>(
+                    `http://localhost:8000/transactions/${tran.id}`,
+                    {
+                        params: {
+                            id_user: idUser,
+                        },
+                    }
+                );
+            }
+            const response = await axios.get<ITransaction[]>(
+                'http://localhost:8000/transactions',
+                {
+                    params: {
+                        id_user: idUser,
+                    },
+                }
+            );
+            return response.data;
         } catch (e) {
-            return thunkAPI.rejectWithValue('Не вдалося');
+            return thunkAPI.rejectWithValue(
+                'Не вдалося змінити категорію для транзакцій'
+            );
         }
     }
 );
@@ -115,32 +131,22 @@ const changeTransaction = createAsyncThunk(
         {
             idUser,
             newDataTransaction,
-            transactions,
         }: {
             idUser: string;
             newDataTransaction: ITransaction;
-            transactions: ITransaction[];
         },
         thunkAPI
     ) => {
         try {
-            const newMasTransactions = transactions.map(
-                (transaction: ITransaction) => {
-                    if (transaction.id == newDataTransaction.id) {
-                        return newDataTransaction;
-                    }
-                    return transaction;
-                }
-            );
-            const response = await axios.patch<IUser>(
-                `http://localhost:8000/users/${idUser}`,
+            const response = await axios.patch<ITransaction>(
+                `http://localhost:8000/transactions/${newDataTransaction.id}`,
                 {
-                    transactions: newMasTransactions,
+                    ...newDataTransaction,
                 }
             );
-            return response.data.transactions;
+            return response.data;
         } catch (e) {
-            return thunkAPI.rejectWithValue('Не вдалося');
+            return thunkAPI.rejectWithValue('Не вдалося змінити транзакцію');
         }
     }
 );
@@ -151,27 +157,20 @@ const deleteTransaction = createAsyncThunk(
         {
             idUser,
             idTransaction,
-            transactions,
         }: {
             idUser: string;
             idTransaction: string;
-            transactions: ITransaction[];
         },
         thunkAPI
     ) => {
         try {
-            const newMasTransactions = transactions.filter(
-                (transaction: ITransaction) => transaction.id !== idTransaction
+            const response = await axios.delete<ITransaction>(
+                `http://localhost:8000/transactions/${idTransaction}`
             );
-            const response = await axios.patch<IUser>(
-                `http://localhost:8000/users/${idUser}`,
-                {
-                    transactions: newMasTransactions,
-                }
-            );
-            return response.data.transactions;
+            if (Object.keys(response.data).length == 0) return idTransaction;
+            return '';
         } catch (e) {
-            return thunkAPI.rejectWithValue('Не вдалося');
+            return thunkAPI.rejectWithValue('Не вдалося видалити транзакцію');
         }
     }
 );
@@ -201,9 +200,9 @@ const transactionSlice = createSlice({
         },
         [addTransaction.fulfilled.type]: (
             state,
-            action: PayloadAction<ITransaction[]>
+            action: PayloadAction<ITransaction>
         ) => {
-            state.transactions = action.payload;
+            state.transactions = [...state.transactions, action.payload];
         },
         [changeCategoryForTransactions.fulfilled.type]: (
             state,
@@ -213,15 +212,23 @@ const transactionSlice = createSlice({
         },
         [changeTransaction.fulfilled.type]: (
             state,
-            action: PayloadAction<ITransaction[]>
+            action: PayloadAction<ITransaction>
         ) => {
-            state.transactions = action.payload;
+            const transactionWithNewData: ITransaction = action.payload;
+            state.transactions = state.transactions.map((transaction) => {
+                if (transaction.id == transactionWithNewData.id)
+                    return transactionWithNewData;
+                return transaction;
+            });
         },
         [deleteTransaction.fulfilled.type]: (
             state,
-            action: PayloadAction<ITransaction[]>
+            action: PayloadAction<string>
         ) => {
-            state.transactions = action.payload;
+            const idDeleteTransaction = action.payload;
+            state.transactions = state.transactions.filter(
+                (transaction) => transaction.id !== idDeleteTransaction
+            );
         },
     },
 });

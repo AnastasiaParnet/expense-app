@@ -6,7 +6,6 @@ import {
 } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { ICategory } from 'models/ICategory';
-import { IUser } from 'models/IUser';
 import { AppDispatch, RootState } from 'store/store';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -19,12 +18,56 @@ const initializationCategories = createAsyncThunk(
     'category/initialization',
     async (idUser: string, thunkAPI) => {
         try {
-            const response = await axios.get<IUser>(
-                `http://localhost:8000/users/${idUser}`
+            const response = await axios.get<ICategory[]>(
+                `http://localhost:8000/categories`,
+                {
+                    params: {
+                        id_user: idUser,
+                    },
+                }
             );
-            return response.data.categories;
+            if (response.data.length == 0) {
+                const masCategoriesForNewUser: ICategory[] = [
+                    {
+                        id: uuidv4(),
+                        label: 'інше',
+                        read_only: true,
+                        id_user: idUser,
+                    },
+                    {
+                        id: uuidv4(),
+                        label: 'зарплатня',
+                        read_only: true,
+                        id_user: idUser,
+                    },
+                    {
+                        id: uuidv4(),
+                        label: 'подарунки',
+                        read_only: true,
+                        id_user: idUser,
+                    },
+                    {
+                        id: uuidv4(),
+                        label: 'подорож',
+                        read_only: true,
+                        id_user: idUser,
+                    },
+                ];
+                let masResponseData: ICategory[] = [];
+                for (const category of masCategoriesForNewUser) {
+                    const response = await axios.post<ICategory>(
+                        'http://localhost:8000/categories',
+                        category
+                    );
+                    masResponseData = [...masResponseData, response.data];
+                }
+                return masResponseData;
+            }
+            return response.data;
         } catch (e) {
-            return thunkAPI.rejectWithValue('Не вдалося');
+            return thunkAPI.rejectWithValue(
+                'Не вдалося ініціалізувати категорії'
+            );
         }
     }
 );
@@ -35,11 +78,9 @@ const addCategory = createAsyncThunk(
         {
             idUser,
             labelNewCategory,
-            categories,
         }: {
             idUser: string;
             labelNewCategory: string;
-            categories: ICategory[];
         },
         thunkAPI
     ) => {
@@ -48,17 +89,15 @@ const addCategory = createAsyncThunk(
                 id: uuidv4(),
                 label: labelNewCategory,
                 read_only: false,
+                id_user: idUser,
             };
-            const newMasCategories = [...categories, newCategory];
-            const response = await axios.patch<IUser>(
-                `http://localhost:8000/users/${idUser}`,
-                {
-                    categories: newMasCategories,
-                }
+            const response = await axios.post<ICategory>(
+                `http://localhost:8000/categories`,
+                newCategory
             );
-            return response.data.categories;
+            return response.data;
         } catch (e) {
-            return thunkAPI.rejectWithValue('Не вдалося');
+            return thunkAPI.rejectWithValue('Не вдалося додати категорію');
         }
     }
 );
@@ -70,34 +109,26 @@ const changeNameCategory = createAsyncThunk(
             idUser,
             idCategory,
             newLabel,
-            categories,
         }: {
             idUser: string;
             idCategory: string;
             newLabel: string;
-            categories: ICategory[];
         },
         thunkAPI
     ) => {
         try {
-            const newMasCategories = categories.map((category: ICategory) => {
-                if (category.id === idCategory)
-                    return {
-                        id: category.id,
-                        label: newLabel,
-                        read_only: category.read_only,
-                    };
-                return category;
-            });
-            const response = await axios.patch<IUser>(
-                `http://localhost:8000/users/${idUser}`,
+            const response = await axios.patch<ICategory>(
+                `http://localhost:8000/categories/${idCategory}`,
                 {
-                    categories: newMasCategories,
+                    id: idCategory,
+                    label: newLabel,
                 }
             );
-            return response.data.categories;
+            return response.data;
         } catch (e) {
-            return thunkAPI.rejectWithValue('Не вдалося');
+            return thunkAPI.rejectWithValue(
+                'Не вдалося змінити назву категорії'
+            );
         }
     }
 );
@@ -108,27 +139,20 @@ const deleteCategory = createAsyncThunk(
         {
             idUser,
             idCategory,
-            categories,
         }: {
             idUser: string;
             idCategory: string;
-            categories: ICategory[];
         },
         thunkAPI
     ) => {
         try {
-            const newMasCategories = categories.filter(
-                (category: ICategory) => category.id !== idCategory
+            const response = await axios.delete<ICategory>(
+                `http://localhost:8000/categories/${idCategory}`
             );
-            const response = await axios.patch<IUser>(
-                `http://localhost:8000/users/${idUser}`,
-                {
-                    categories: newMasCategories,
-                }
-            );
-            return response.data.categories;
+            if (Object.keys(response.data).length == 0) return idCategory;
+            return '';
         } catch (e) {
-            return thunkAPI.rejectWithValue('Не вдалося');
+            return thunkAPI.rejectWithValue('Не вдалося видалити категорію');
         }
     }
 );
@@ -167,21 +191,29 @@ const categorySlice = createSlice({
         },
         [addCategory.fulfilled.type]: (
             state,
-            action: PayloadAction<ICategory[]>
+            action: PayloadAction<ICategory>
         ) => {
-            state.categories = action.payload;
+            state.categories = [...state.categories, action.payload];
         },
         [changeNameCategory.fulfilled.type]: (
             state,
-            action: PayloadAction<ICategory[]>
+            action: PayloadAction<ICategory>
         ) => {
-            state.categories = action.payload;
+            const categoryWithNewName: ICategory = action.payload;
+            state.categories = state.categories.map((category) => {
+                if (category.id == categoryWithNewName.id)
+                    return categoryWithNewName;
+                return category;
+            });
         },
         [deleteCategory.fulfilled.type]: (
             state,
-            action: PayloadAction<ICategory[]>
+            action: PayloadAction<string>
         ) => {
-            state.categories = action.payload;
+            const idDeleteCategory = action.payload;
+            state.categories = state.categories.filter(
+                (category) => category.id !== idDeleteCategory
+            );
         },
     },
 });
