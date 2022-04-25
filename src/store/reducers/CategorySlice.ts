@@ -11,7 +11,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 interface CategoryState {
     categories: ICategory[];
-    arrayIdActualCategories: string[];
 }
 
 const initializationCategories = createAsyncThunk(
@@ -37,19 +36,19 @@ const initializationCategories = createAsyncThunk(
                     {
                         id: uuidv4(),
                         label: 'зарплатня',
-                        read_only: true,
+                        read_only: false,
                         id_user: idUser,
                     },
                     {
                         id: uuidv4(),
                         label: 'подарунки',
-                        read_only: true,
+                        read_only: false,
                         id_user: idUser,
                     },
                     {
                         id: uuidv4(),
                         label: 'подорож',
-                        read_only: true,
+                        read_only: false,
                         id_user: idUser,
                     },
                 ];
@@ -61,6 +60,7 @@ const initializationCategories = createAsyncThunk(
                     );
                     masResponseData = [...masResponseData, response.data];
                 }
+                console.log(masResponseData);
                 return masResponseData;
             }
             return response.data;
@@ -146,9 +146,11 @@ const deleteCategory = createAsyncThunk(
         thunkAPI
     ) => {
         try {
+            console.log('category1');
             const response = await axios.delete<ICategory>(
                 `http://localhost:8000/categories/${idCategory}`
             );
+            console.log('category2');
             if (Object.keys(response.data).length == 0) return idCategory;
             return '';
         } catch (e) {
@@ -157,29 +159,20 @@ const deleteCategory = createAsyncThunk(
     }
 );
 
-const changeActualCategories = (masId: string[]) => (dispatch: AppDispatch) => {
-    dispatch(categorySlice.actions.changeArrayIdActualCategories(masId));
-};
-
 const clearCategory = () => (dispatch: AppDispatch) => {
     dispatch(categorySlice.actions.clearCategory());
 };
 
 const initialState: CategoryState = {
     categories: [],
-    arrayIdActualCategories: [],
 };
 
 const categorySlice = createSlice({
     name: 'category',
     initialState,
     reducers: {
-        changeArrayIdActualCategories(state, action: PayloadAction<string[]>) {
-            state.arrayIdActualCategories = action.payload;
-        },
         clearCategory(state) {
             state.categories = [];
-            state.arrayIdActualCategories = [];
         },
     },
     extraReducers: {
@@ -231,6 +224,5 @@ export {
     addCategory,
     changeNameCategory,
     deleteCategory,
-    changeActualCategories,
     clearCategory,
 };

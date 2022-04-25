@@ -9,21 +9,42 @@ import { AppDispatch, RootState } from 'store/store';
 import { v4 as uuidv4 } from 'uuid';
 import { ITransaction } from '../../models/ITransaction';
 
-interface TransactionState {
-    transactions: ITransaction[];
+interface IPageParams {
+    page: number;
+    limit: number;
+    search: string;
+    arrayIdActualCategories: string[];
 }
 
-const initializationTransactions = createAsyncThunk(
-    'transaction/initialization',
-    async (idUser: string, thunkAPI) => {
+interface TransactionState {
+    transactions: ITransaction[];
+    isLoading: boolean;
+    error: string;
+    totalTransactions: number;
+    pageParams: IPageParams;
+}
+
+const fetchTransactions = createAsyncThunk(
+    'transaction/fetch',
+    async (
+        {
+            idUser,
+            pageParams,
+        }: {
+            idUser: string;
+            pageParams: IPageParams;
+        },
+        thunkAPI
+    ) => {
         try {
             const response = await axios.get<ITransaction[]>(
                 `http://localhost:8000/transactions`,
                 {
                     params: {
                         id_user: idUser,
+                        id_category: pageParams.arrayIdActualCategories,
                         _sort: 'date',
-                        _order: 'desc',
+                        _order: 'asc',
                     },
                 }
             );
@@ -36,22 +57,61 @@ const initializationTransactions = createAsyncThunk(
     }
 );
 
-const addTransaction = createAsyncThunk(
-    'transaction/addTransaction',
+const fetchTransactionsByPage = createAsyncThunk(
+    'transaction/fetchByPage',
     async (
         {
             idUser,
-            label,
-            amount,
-            idCategory,
+            pageParams,
         }: {
             idUser: string;
-            label: string;
-            amount: number;
-            idCategory: string;
+            pageParams: IPageParams;
         },
         thunkAPI
     ) => {
+        try {
+            const response = await axios.get<ITransaction[]>(
+                `http://localhost:8000/transactions`,
+                {
+                    params: {
+                        id_user: idUser,
+                        id_category: pageParams.arrayIdActualCategories,
+                        label_like: pageParams.search,
+                        _page: pageParams.page,
+                        _limit: pageParams.limit,
+                        _sort: 'date',
+                        _order: 'desc',
+                    },
+                }
+            );
+            console.log('fetch');
+            return {
+                transactions: response.data,
+                totalTransactions: response.headers['x-total-count'],
+            };
+        } catch (e) {
+            return thunkAPI.rejectWithValue(
+                'Не вдалося ініціалізувати транзакції'
+            );
+        }
+    }
+);
+
+const addTransaction =
+    ({
+        idUser,
+        label,
+        amount,
+        idCategory,
+        pageParams,
+    }: {
+        idUser: string;
+        label: string;
+        amount: number;
+        idCategory: string;
+        pageParams: IPageParams;
+    }) =>
+    async (dispatch: AppDispatch) => {
         try {
             const date = new Date(new Date().setHours(0, 0, 0, 0));
             const newTransaction: ITransaction = {
@@ -62,33 +122,37 @@ const addTransaction = createAsyncThunk(
                 id_category: idCategory,
                 id_user: idUser,
             };
-            const response = await axios.post<ITransaction>(
+            await axios.post<ITransaction>(
                 `http://localhost:8000/transactions`,
                 newTransaction
             );
-            return response.data;
+            dispatch(fetchTransactionsByPage({ idUser, pageParams }));
         } catch (e) {
-            return thunkAPI.rejectWithValue('Не вдалося додати транзакцію');
+            console.error(e);
+            dispatch(
+                transactionSlice.actions.changeError(
+                    'Не вдалося додати транзакцію'
+                )
+            );
         }
-    }
-);
+    };
 
-const changeCategoryForTransactions = createAsyncThunk(
-    'transaction/changeCategory',
-    async (
-        {
-            idUser,
-            oldIdCategory,
-            newIdCategory,
-        }: {
-            idUser: string;
-            oldIdCategory: string;
-            newIdCategory: string;
-        },
-        thunkAPI
-    ) => {
+const changeCategoryForTransactions =
+    ({
+        idUser,
+        oldIdCategory,
+        newIdCategory,
+        pageParams,
+    }: {
+        idUser: string;
+        oldIdCategory: string;
+        newIdCategory: string;
+        pageParams: IPageParams;
+    }) =>
+    async (dispatch: AppDispatch) => {
         try {
-            const response_transactions = await axios.get<ITransaction[]>(
+            console.log('tran1');
+            const response = await axios.get<ITransaction[]>(
                 'http://localhost:8000/transactions',
                 {
                     params: {
@@ -97,18 +161,15 @@ const changeCategoryForTransactions = createAsyncThunk(
                     },
                 }
             );
-            const transactions = response_transactions.data;
-            for (const tran of transactions) {
+            for (const tran of response.data) {
                 await axios.patch<ITransaction>(
                     `http://localhost:8000/transactions/${tran.id}`,
                     {
-                        params: {
-                            id_user: idUser,
-                        },
+                        id_category: newIdCategory,
                     }
                 );
             }
-            const response = await axios.get<ITransaction[]>(
+            await axios.get<ITransaction[]>(
                 'http://localhost:8000/transactions',
                 {
                     params: {
@@ -116,64 +177,77 @@ const changeCategoryForTransactions = createAsyncThunk(
                     },
                 }
             );
-            return response.data;
+            console.log('tran2');
+            dispatch(fetchTransactionsByPage({ idUser, pageParams }));
         } catch (e) {
-            return thunkAPI.rejectWithValue(
-                'Не вдалося змінити категорію для транзакцій'
+            console.error(e);
+            dispatch(
+                transactionSlice.actions.changeError(
+                    'Не вдалося змінити категорію для транзакцій'
+                )
             );
         }
-    }
-);
+    };
 
-const changeTransaction = createAsyncThunk(
-    'transaction/changeTransaction',
-    async (
-        {
-            idUser,
-            newDataTransaction,
-        }: {
-            idUser: string;
-            newDataTransaction: ITransaction;
-        },
-        thunkAPI
-    ) => {
+const changeTransaction =
+    ({
+        idUser,
+        newDataTransaction,
+        pageParams,
+    }: {
+        idUser: string;
+        newDataTransaction: ITransaction;
+        pageParams: IPageParams;
+    }) =>
+    async (dispatch: AppDispatch) => {
         try {
-            const response = await axios.patch<ITransaction>(
+            await axios.patch<ITransaction>(
                 `http://localhost:8000/transactions/${newDataTransaction.id}`,
                 {
                     ...newDataTransaction,
                 }
             );
-            return response.data;
+            dispatch(fetchTransactionsByPage({ idUser, pageParams }));
         } catch (e) {
-            return thunkAPI.rejectWithValue('Не вдалося змінити транзакцію');
+            console.error(e);
+            dispatch(
+                transactionSlice.actions.changeError(
+                    'Не вдалося змінити транзакцію'
+                )
+            );
         }
-    }
-);
+    };
 
-const deleteTransaction = createAsyncThunk(
-    'transaction/delete',
-    async (
-        {
-            idUser,
-            idTransaction,
-        }: {
-            idUser: string;
-            idTransaction: string;
-        },
-        thunkAPI
-    ) => {
+const deleteTransaction =
+    ({
+        idUser,
+        idTransaction,
+        pageParams,
+    }: {
+        idUser: string;
+        idTransaction: string;
+        pageParams: IPageParams;
+    }) =>
+    async (dispatch: AppDispatch) => {
         try {
-            const response = await axios.delete<ITransaction>(
+            await axios.delete<ITransaction>(
                 `http://localhost:8000/transactions/${idTransaction}`
             );
-            if (Object.keys(response.data).length == 0) return idTransaction;
-            return '';
+            dispatch(fetchTransactionsByPage({ idUser, pageParams }));
         } catch (e) {
-            return thunkAPI.rejectWithValue('Не вдалося видалити транзакцію');
+            console.error(e);
+            dispatch(
+                transactionSlice.actions.changeError(
+                    'Не вдалося видалити транзакцію'
+                )
+            );
         }
-    }
-);
+    };
+
+const changePageParams =
+    (pageParams: IPageParams) => (dispatch: AppDispatch) => {
+        dispatch(transactionSlice.actions.changePageParams(pageParams));
+    };
 
 const clearTransaction = () => (dispatch: AppDispatch) => {
     dispatch(transactionSlice.actions.clearTransaction());
@@ -181,54 +255,71 @@ const clearTransaction = () => (dispatch: AppDispatch) => {
 
 const initialState: TransactionState = {
     transactions: [],
+    totalTransactions: 1,
+    isLoading: false,
+    error: '',
+    pageParams: {
+        page: 1,
+        limit: 3,
+        search: '',
+        arrayIdActualCategories: [],
+    },
 };
 
 const transactionSlice = createSlice({
     name: 'transaction',
     initialState,
     reducers: {
+        changeError(state, action: PayloadAction<string>) {
+            state.error = action.payload;
+        },
+        changePageParams(state, action: PayloadAction<IPageParams>) {
+            state.pageParams = action.payload;
+        },
         clearTransaction(state) {
             state.transactions = [];
         },
     },
     extraReducers: {
-        [initializationTransactions.fulfilled.type]: (
-            state,
-            action: PayloadAction<ITransaction[]>
-        ) => {
-            state.transactions = action.payload;
+        [fetchTransactionsByPage.pending.type]: (state) => {
+            state.transactions = [];
+            state.isLoading = true;
+            state.error = '';
         },
-        [addTransaction.fulfilled.type]: (
-            state,
-            action: PayloadAction<ITransaction>
-        ) => {
-            state.transactions = [...state.transactions, action.payload];
+        [fetchTransactionsByPage.fulfilled.type]: (state, action) => {
+            state.transactions = action.payload.transactions;
+            state.totalTransactions = action.payload.totalTransactions;
+            state.isLoading = false;
+            state.error = '';
         },
-        [changeCategoryForTransactions.fulfilled.type]: (
-            state,
-            action: PayloadAction<ITransaction[]>
-        ) => {
-            state.transactions = action.payload;
-        },
-        [changeTransaction.fulfilled.type]: (
-            state,
-            action: PayloadAction<ITransaction>
-        ) => {
-            const transactionWithNewData: ITransaction = action.payload;
-            state.transactions = state.transactions.map((transaction) => {
-                if (transaction.id == transactionWithNewData.id)
-                    return transactionWithNewData;
-                return transaction;
-            });
-        },
-        [deleteTransaction.fulfilled.type]: (
+        [fetchTransactionsByPage.rejected.type]: (
             state,
             action: PayloadAction<string>
         ) => {
-            const idDeleteTransaction = action.payload;
-            state.transactions = state.transactions.filter(
-                (transaction) => transaction.id !== idDeleteTransaction
-            );
+            state.transactions = [];
+            state.isLoading = false;
+            state.error = action.payload;
+        },
+        [fetchTransactions.pending.type]: (state) => {
+            state.transactions = [];
+            state.isLoading = true;
+            state.error = '';
+        },
+        [fetchTransactions.fulfilled.type]: (
+            state,
+            action: PayloadAction<ITransaction[]>
+        ) => {
+            state.transactions = action.payload;
+            state.isLoading = false;
+            state.error = '';
+        },
+        [fetchTransactions.rejected.type]: (
+            state,
+            action: PayloadAction<string>
+        ) => {
+            state.transactions = [];
+            state.isLoading = false;
+            state.error = action.payload;
         },
     },
 });
@@ -240,12 +331,15 @@ const transactionSelector = createDraftSafeSelector(rootState, (state) => {
 
 export default transactionSlice.reducer;
 export {
+    type IPageParams,
     transactionSlice,
     transactionSelector,
-    initializationTransactions,
+    fetchTransactions,
+    fetchTransactionsByPage,
     addTransaction,
     changeCategoryForTransactions,
     changeTransaction,
     deleteTransaction,
     clearTransaction,
+    changePageParams,
 };

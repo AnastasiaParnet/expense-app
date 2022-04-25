@@ -7,10 +7,14 @@ import React, { useEffect, useState } from 'react';
 import { authSelector } from 'store/reducers/AuthSlice';
 import {
     categorySelector,
-    changeActualCategories,
     deleteCategory,
+    initializationCategories,
 } from 'store/reducers/CategorySlice';
-import { changeCategoryForTransactions } from 'store/reducers/TransactionSlice';
+import {
+    changeCategoryForTransactions,
+    changePageParams,
+    transactionSelector,
+} from 'store/reducers/TransactionSlice';
 import FormEditCategory from './Forms/FormEditCategory';
 
 interface ButtonGroupCategoriesProps {
@@ -46,11 +50,26 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
 }) => {
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
-    const { categories, arrayIdActualCategories } =
-        useAppSelector(categorySelector);
+    const { categories } = useAppSelector(categorySelector);
+    const { pageParams } = useAppSelector(transactionSelector);
     const [actualCategories, setActualCategories] = useState<string[]>(
-        arrayIdActualCategories
+        pageParams.arrayIdActualCategories
     );
+
+    useEffect(() => {
+        if (idUser) {
+            dispatch(initializationCategories(idUser));
+        }
+    }, [dispatch, idUser]);
+
+    useEffect(() => {
+        dispatch(
+            changePageParams({
+                ...pageParams,
+                arrayIdActualCategories: actualCategories,
+            })
+        );
+    }, [dispatch, actualCategories]);
 
     const clickDeleteCategory = (
         event: React.MouseEvent<SVGSVGElement>,
@@ -67,6 +86,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                     idUser,
                     oldIdCategory: idCategory,
                     newIdCategory: newIdCategoryForTransactions || '',
+                    pageParams,
                 })
             );
             dispatch(
@@ -75,7 +95,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                     idCategory,
                 })
             );
-            if (arrayIdActualCategories.includes(idCategory)) {
+            if (pageParams.arrayIdActualCategories.includes(idCategory)) {
                 const newActualCategories = actualCategories.filter(
                     (category) => category !== idCategory
                 );
@@ -94,10 +114,6 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
             setActualCategories(actualCategories.filter((el) => el !== id));
         } else setActualCategories([...actualCategories, id]);
     };
-
-    useEffect(() => {
-        dispatch(changeActualCategories(actualCategories));
-    }, [dispatch, actualCategories]);
 
     return (
         <>

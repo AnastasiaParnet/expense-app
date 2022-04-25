@@ -1,8 +1,8 @@
 import { Box, styled } from '@mui/system';
 import { dateToString } from 'hooks/date';
-import { useAppSelector } from 'hooks/redux';
+import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import { ITransaction } from 'models/ITransaction';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Area,
     AreaChart,
@@ -12,8 +12,11 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
-import { categorySelector } from 'store/reducers/CategorySlice';
-import { transactionSelector } from 'store/reducers/TransactionSlice';
+import { authSelector } from 'store/reducers/AuthSlice';
+import {
+    fetchTransactions,
+    transactionSelector,
+} from 'store/reducers/TransactionSlice';
 
 interface IDataForGraphic {
     date: string;
@@ -26,16 +29,16 @@ const BoxChart = styled(Box)({
 });
 
 const Chart: React.FC = () => {
-    const { transactions } = useAppSelector(transactionSelector);
-    const { arrayIdActualCategories } = useAppSelector(categorySelector);
+    const dispatch = useAppDispatch();
+    const { idUser } = useAppSelector(authSelector);
+    const { transactions, pageParams } = useAppSelector(transactionSelector);
 
-    const dataForGraphic: IDataForGraphic[] = transactions
-        .filter(
-            (tran: ITransaction) =>
-                arrayIdActualCategories.length == 0 ||
-                arrayIdActualCategories.includes(tran.id_category)
-        )
-        .reduce((mas: IDataForGraphic[], transaction: ITransaction) => {
+    useEffect(() => {
+        if (idUser) dispatch(fetchTransactions({ idUser, pageParams }));
+    }, [dispatch, idUser, pageParams]);
+
+    const dataForGraphic: IDataForGraphic[] = transactions.reduce(
+        (mas: IDataForGraphic[], transaction: ITransaction) => {
             const indexLastData = mas.length - 1;
             let amount = transaction.amount;
             const dateString = dateToString(transaction.date);
@@ -50,7 +53,9 @@ const Chart: React.FC = () => {
                     amount,
                 },
             ];
-        }, []);
+        },
+        []
+    );
 
     const gradientOffset = (dataForGraphic: IDataForGraphic[]) => {
         const dataMax = Math.max(

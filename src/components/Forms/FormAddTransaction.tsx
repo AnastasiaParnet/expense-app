@@ -20,7 +20,10 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { authSelector } from 'store/reducers/AuthSlice';
 import { categorySelector } from 'store/reducers/CategorySlice';
-import { addTransaction } from 'store/reducers/TransactionSlice';
+import {
+    addTransaction,
+    transactionSelector,
+} from 'store/reducers/TransactionSlice';
 import * as yup from 'yup';
 
 interface InterfaceAddTransaction {
@@ -39,6 +42,7 @@ const FormAddTransaction: React.FC = () => {
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
     const { categories } = useAppSelector(categorySelector);
+    const { pageParams } = useAppSelector(transactionSelector);
     const [open, setOpen] = useState<boolean>(false);
 
     const {
@@ -71,6 +75,7 @@ const FormAddTransaction: React.FC = () => {
             const dataForAdd = {
                 ...data,
                 idUser,
+                pageParams,
             };
             dispatch(addTransaction(dataForAdd));
         }

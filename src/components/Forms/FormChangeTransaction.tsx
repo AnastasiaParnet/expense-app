@@ -21,6 +21,7 @@ import { categorySelector } from 'store/reducers/CategorySlice';
 import {
     changeTransaction,
     deleteTransaction,
+    transactionSelector,
 } from 'store/reducers/TransactionSlice';
 import * as yup from 'yup';
 
@@ -49,11 +50,13 @@ const BoxButton = styled(Box)({
     justifyContent: 'space-between',
 });
 
-const validationSchema = yup.object({
-    label: yup.string().required('Введіть назву транзакції'),
-    amount: yup.number().integer('number').required('Введіть суму'),
-    id_category: yup.string().required('Оберіть категорію'),
-});
+const validationSchema = yup
+    .object({
+        label: yup.string().required('Введіть назву транзакції'),
+        amount: yup.number().integer('number').required('Введіть суму'),
+        id_category: yup.string().required('Оберіть категорію'),
+    })
+    .required();
 
 const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
     transaction,
@@ -62,6 +65,7 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
     const { categories } = useAppSelector(categorySelector);
+    const { pageParams } = useAppSelector(transactionSelector);
 
     const {
         control,
@@ -75,7 +79,7 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
         defaultValues: {
             label: transaction.label,
             amount: transaction.amount,
-            id_category: transaction.id_category,
+            //id_category: transaction.id_category,
             date: new Date(transaction.date),
         },
     });
@@ -98,6 +102,7 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
                 changeTransaction({
                     idUser,
                     newDataTransaction,
+                    pageParams,
                 })
             );
         }
@@ -114,6 +119,7 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
             const dataForDelete = {
                 idUser,
                 idTransaction: transaction.id,
+                pageParams,
             };
             dispatch(deleteTransaction(dataForDelete));
         }
@@ -144,6 +150,7 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
             <Controller
                 control={control}
                 name="id_category"
+                defaultValue={transaction.id_category}
                 render={({ field: { value, onChange } }) => (
                     <StatFormControl fullWidth size="small" variant="standard">
                         <InputLabel id="category">Назва категорії</InputLabel>
