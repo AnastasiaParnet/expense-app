@@ -30,13 +30,17 @@ const PaginationTransactions = () => {
     };
 
     return (
-        <StatPagination
-            count={countPages}
-            page={pageParams.page}
-            variant="outlined"
-            color="primary"
-            onChange={handleChange}
-        />
+        <>
+            {countPages > 0 && (
+                <StatPagination
+                    count={countPages}
+                    page={pageParams.page}
+                    variant="outlined"
+                    color="primary"
+                    onChange={handleChange}
+                />
+            )}
+        </>
     );
 };
 

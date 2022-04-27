@@ -1,4 +1,4 @@
-import { Alert } from '@mui/material';
+import { Alert, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import Loader from 'components/UI/Loader';
 import { useAppSelector } from 'hooks/redux';
@@ -13,7 +13,9 @@ const BoxMessageTransactions = () => {
             {isLoading && <Loader />}
             {error && <Alert severity="error">{error}</Alert>}
             {!isLoading && !error && transactions.length == 0 && (
-                <h1>За цим запитом немає транзакцій</h1>
+                <Typography variant="h1">
+                    За цим запитом немає транзакцій
+                </Typography>
             )}
         </Box>
     );

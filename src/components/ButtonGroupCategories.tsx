@@ -44,6 +44,10 @@ const ToggleButtonChange = styled(ToggleButton)(({ theme }) => ({
     },
 }));
 
+const BoxButtonChange = styled(Box)({
+    height: '24px',
+});
+
 const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
     isChangeCategory,
     closeNavMenu,
@@ -71,7 +75,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
         );
     }, [dispatch, actualCategories]);
 
-    const clickDeleteCategory = (
+    const clickDeleteCategory = async (
         event: React.MouseEvent<SVGSVGElement>,
         idCategory: string,
         idUser: string | null
@@ -81,7 +85,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
             const newIdCategoryForTransactions = categories.find(
                 (category) => category.read_only
             )?.id;
-            dispatch(
+            await dispatch(
                 changeCategoryForTransactions({
                     idUser,
                     oldIdCategory: idCategory,
@@ -89,7 +93,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                     pageParams,
                 })
             );
-            dispatch(
+            await dispatch(
                 deleteCategory({
                     idUser,
                     idCategory,
@@ -134,11 +138,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                             >
                                 {category.label}
                                 {isChangeCategory && (
-                                    <Box
-                                        style={{
-                                            height: '24px',
-                                        }}
-                                    >
+                                    <BoxButtonChange>
                                         <FormEditCategory
                                             id={category.id}
                                             name={category.label}
@@ -152,7 +152,7 @@ const ButtonGroupCategories: React.FC<ButtonGroupCategoriesProps> = ({
                                                 );
                                             }}
                                         />
-                                    </Box>
+                                    </BoxButtonChange>
                                 )}
                             </ToggleButtonChange>
                         )

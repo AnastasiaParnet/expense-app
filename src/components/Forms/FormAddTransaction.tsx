@@ -13,7 +13,7 @@ import {
     Select,
     TextField,
 } from '@mui/material';
-import { Box } from '@mui/system';
+import { Box, styled } from '@mui/system';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import { ICategory } from 'models/ICategory';
 import React, { useState } from 'react';
@@ -31,6 +31,14 @@ interface InterfaceAddTransaction {
     amount: number;
     idCategory: string;
 }
+
+const StatTextField = styled(TextField)({
+    margin: '8px 0',
+});
+
+const StatFormControl = styled(FormControl)({
+    margin: '8px 0',
+});
 
 const validationSchema = yup.object({
     label: yup.string().required('Введіть назву транзакції'),
@@ -94,7 +102,7 @@ const FormAddTransaction: React.FC = () => {
                             Зверніть увагу. Від`ємне значення транзакції є
                             витратою, додатне - доходом.
                         </DialogContentText>
-                        <TextField
+                        <StatTextField
                             fullWidth
                             label="Назва транзакції"
                             variant="standard"
@@ -106,7 +114,7 @@ const FormAddTransaction: React.FC = () => {
                                     : ''
                             }
                         />
-                        <TextField
+                        <StatTextField
                             fullWidth
                             label="Сума транзакції"
                             variant="standard"
@@ -114,7 +122,7 @@ const FormAddTransaction: React.FC = () => {
                             error={errors?.amount ? true : false}
                             helperText={errors?.amount ? 'Введіть число' : ''}
                         />
-                        <FormControl
+                        <StatFormControl
                             variant="standard"
                             fullWidth
                             error={errors?.idCategory ? true : false}
@@ -124,7 +132,7 @@ const FormAddTransaction: React.FC = () => {
                             </InputLabel>
                             <Select
                                 labelId="category"
-                                id="demo-simple-select-standard"
+                                id="category"
                                 defaultValue=""
                                 {...register('idCategory')}
                             >
@@ -160,7 +168,7 @@ const FormAddTransaction: React.FC = () => {
                                     Оберіть категорію
                                 </FormHelperText>
                             )}
-                        </FormControl>
+                        </StatFormControl>
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleSubmit(clickAddTransaction)}>

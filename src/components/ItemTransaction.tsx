@@ -1,10 +1,22 @@
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Typography,
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import FormChangeTransaction from 'components/Forms/FormChangeTransaction';
-import { dateToString } from 'hooks/date';
+import { dateForLabel } from 'hooks/date';
 import { ITransaction } from 'models/ITransaction';
 import React, { useEffect, useState } from 'react';
+
+declare module '@mui/material/Typography' {
+    interface TypographyPropsVariantOverrides {
+        name_transaction: true;
+        label_transaction: true;
+    }
+}
 
 interface ItemTransactionProps {
     transaction: ITransaction;
@@ -12,10 +24,6 @@ interface ItemTransactionProps {
     idExpandTransaction: string;
     setIdExpandTransaction: (id: string) => void;
 }
-
-const Label = styled('span')({
-    fontSize: '18px',
-});
 
 const BoxItem = styled(Box)({
     display: 'flex',
@@ -26,11 +34,10 @@ const BoxItem = styled(Box)({
 const BoxLabel = styled(Box)({
     display: 'flex',
     justifyContent: 'space-between',
-    fontFamily: 'Arial, Helvetica, sans-serif',
 });
 
 const Amount = styled('h1')({
-    fontSize: '20px',
+    fontSize: '25px',
     margin: 0,
 });
 
@@ -53,26 +60,36 @@ const ItemTransaction: React.FC<ItemTransactionProps> = ({
     }, [idExpandTransaction, transaction.id]);
 
     return (
-        <Accordion expanded={expand}>
-            <AccordionSummary onClick={() => changeExpanded(transaction.id)}>
-                <BoxItem>
-                    <BoxLabel>
-                        <Label>{transaction.label}</Label>
-                        <span>{labelCategory.toUpperCase()}</span>
-                    </BoxLabel>
-                    <BoxLabel>
-                        <Amount>{transaction.amount}</Amount>
-                        <span>{dateToString(transaction.date)}</span>
-                    </BoxLabel>
-                </BoxItem>
-            </AccordionSummary>
-            <AccordionDetails>
-                <FormChangeTransaction
-                    transaction={transaction}
-                    closeForm={() => changeExpanded(transaction.id)}
-                />
-            </AccordionDetails>
-        </Accordion>
+        <Box>
+            <Accordion expanded={expand}>
+                <AccordionSummary
+                    onClick={() => changeExpanded(transaction.id)}
+                >
+                    <BoxItem>
+                        <BoxLabel>
+                            <Typography variant="name_transaction">
+                                {transaction.label}
+                            </Typography>
+                            <Typography variant="label_transaction">
+                                {labelCategory.toUpperCase()}
+                            </Typography>
+                        </BoxLabel>
+                        <BoxLabel>
+                            <Amount>{transaction.amount}</Amount>
+                            <Typography variant="label_transaction">
+                                {dateForLabel(transaction.date)}
+                            </Typography>
+                        </BoxLabel>
+                    </BoxItem>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <FormChangeTransaction
+                        transaction={transaction}
+                        closeForm={() => changeExpanded(transaction.id)}
+                    />
+                </AccordionDetails>
+            </Accordion>
+        </Box>
     );
 };
 

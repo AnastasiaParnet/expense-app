@@ -146,11 +146,9 @@ const deleteCategory = createAsyncThunk(
         thunkAPI
     ) => {
         try {
-            console.log('category1');
             const response = await axios.delete<ICategory>(
                 `http://localhost:8000/categories/${idCategory}`
             );
-            console.log('category2');
             if (Object.keys(response.data).length == 0) return idCategory;
             return '';
         } catch (e) {

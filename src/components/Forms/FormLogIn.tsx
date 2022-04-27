@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, Typography } from '@mui/material';
 import { Box, styled } from '@mui/system';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
 import React, { useEffect } from 'react';
@@ -19,22 +19,25 @@ interface InterfaceLogIn {
 
 const Form = styled('form')({
     display: 'inline-block',
-    padding: '25px 10%',
-    border: '1px solid rgb(52, 35, 42)',
     textAlign: 'center',
 });
 
-const Title = styled('h1')({
-    margin: 0,
+const BoxInput = styled(Box)({
+    padding: '0 0 15px 0',
+    width: '260px',
 });
 
-const BoxInput = styled(Box)({
-    padding: '7px',
+const BoxButton = styled(Box)({
+    margin: '5px 0',
 });
 
 const validationSchema = yup.object({
     username: yup.string().required("Введіть ім'я користувача"),
-    password: yup.string().min(4).max(16).required('Введіть пароль'),
+    password: yup
+        .string()
+        .min(4, 'Менше 4-ох символів')
+        .max(16, 'Більше 16-ти символів')
+        .required('Введіть пароль'),
 });
 
 const FormLogIn: React.FC = () => {
@@ -64,11 +67,12 @@ const FormLogIn: React.FC = () => {
 
     return (
         <Form>
-            <Title style={{ textAlign: 'center' }}>Вхід</Title>
+            <Typography variant="h1">Вхід</Typography>
             <BoxInput>
                 <TextField
+                    fullWidth
                     label="Ім'я користувача"
-                    variant="filled"
+                    variant="standard"
                     {...register('username')}
                     error={errors?.username ? true : false}
                     helperText={
@@ -80,9 +84,10 @@ const FormLogIn: React.FC = () => {
             </BoxInput>
             <BoxInput>
                 <TextField
+                    fullWidth
                     label="Пароль"
                     type="password"
-                    variant="filled"
+                    variant="standard"
                     {...register('password')}
                     error={errors?.password ? true : false}
                     helperText={
@@ -92,7 +97,7 @@ const FormLogIn: React.FC = () => {
                     }
                 />
             </BoxInput>
-            <BoxInput>
+            <BoxButton>
                 <Button
                     sx={{ width: '150px' }}
                     variant="contained"
@@ -100,12 +105,12 @@ const FormLogIn: React.FC = () => {
                 >
                     Ввійти
                 </Button>
-            </BoxInput>
-            <BoxInput>
+            </BoxButton>
+            <BoxButton>
                 <Button onClick={redirectToRegistration}>
                     Зареєструватись
                 </Button>
-            </BoxInput>
+            </BoxButton>
         </Form>
     );
 };

@@ -4,7 +4,7 @@ import React from 'react';
 
 const BoxLogIn = styled(Box)({
     position: 'fixed',
-    top: '25%',
+    top: '30%',
     right: 0,
     bottom: 0,
     left: 0,

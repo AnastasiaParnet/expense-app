@@ -1,8 +1,8 @@
 import Box from '@mui/material/Box';
 import styled from '@mui/system/styled';
-import BaseBox from 'components/BaseBox';
-import BoxMessageTransactions from 'components/BoxMessageTransactions';
-import Chart from 'components/Chart';
+import BaseBox from 'components/Box/BaseBoxPage';
+import BoxGraphic from 'components/Box/BoxGraphic';
+import BoxMessageTransactions from 'components/Box/BoxMessageTransactions';
 import React from 'react';
 
 const BoxChart = styled(Box)({
@@ -16,7 +16,7 @@ const Graphics: React.FC = () => {
         <BaseBox isChangeCategory={false}>
             <BoxChart>
                 <BoxMessageTransactions />
-                <Chart />
+                <BoxGraphic />
             </BoxChart>
         </BaseBox>
     );

@@ -38,11 +38,16 @@ interface InterfaceChangeTransaction {
 }
 
 const StatTextField = styled(TextField)({
-    margin: '10px 0',
+    margin: '10px',
 });
 
 const StatFormControl = styled(FormControl)({
-    margin: '10px 0',
+    margin: '10px',
+});
+
+const BoxInput = styled(Box)({
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
 });
 
 const BoxButton = styled(Box)({
@@ -79,7 +84,6 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
         defaultValues: {
             label: transaction.label,
             amount: transaction.amount,
-            //id_category: transaction.id_category,
             date: new Date(transaction.date),
         },
     });
@@ -127,88 +131,90 @@ const FormChangeTransaction: React.FC<FormChangeTransactionProps> = ({
 
     return (
         <form>
-            <StatTextField
-                fullWidth
-                size="small"
-                label="Назва транзакції"
-                variant="standard"
-                {...register('label')}
-                error={errors?.label ? true : false}
-                helperText={
-                    errors?.label ? errors.label.message || 'Error!!!' : ''
-                }
-            />
-            <StatTextField
-                fullWidth
-                size="small"
-                label="Сума транзакції"
-                variant="standard"
-                {...register('amount')}
-                error={errors?.amount ? true : false}
-                helperText={errors?.amount ? 'Введіть число' : ''}
-            />
-            <Controller
-                control={control}
-                name="id_category"
-                defaultValue={transaction.id_category}
-                render={({ field: { value, onChange } }) => (
-                    <StatFormControl fullWidth size="small" variant="standard">
-                        <InputLabel id="category">Назва категорії</InputLabel>
-                        <Select
-                            labelId="category"
-                            id="demo-simple-select-standard"
-                            value={value}
-                            onChange={onChange}
-                        >
-                            {categories.map((category: ICategory) => {
-                                return (
-                                    !category.read_only && (
-                                        <MenuItem
-                                            key={category.id}
-                                            value={category.id}
-                                        >
-                                            {category.label.toUpperCase()}
-                                        </MenuItem>
-                                    )
-                                );
-                            })}
-                            {categories.map((category: ICategory) => {
-                                return (
-                                    category.read_only && (
-                                        <MenuItem
-                                            key={category.id}
-                                            value={category.id}
-                                        >
-                                            <em>
-                                                {category.label.toUpperCase()}
-                                            </em>
-                                        </MenuItem>
-                                    )
-                                );
-                            })}
-                        </Select>
-                    </StatFormControl>
-                )}
-            />
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <BoxInput>
+                <StatTextField
+                    size="small"
+                    label="Назва транзакції"
+                    variant="standard"
+                    {...register('label')}
+                    error={errors?.label ? true : false}
+                    helperText={
+                        errors?.label ? errors.label.message || 'Error!!!' : ''
+                    }
+                />
                 <Controller
                     control={control}
-                    name="date"
-                    render={({ field: { onChange, value } }) => (
-                        <DatePicker
-                            disableFuture
-                            label="Дата"
-                            openTo="year"
-                            views={['year', 'month', 'day']}
-                            value={value}
-                            onChange={onChange}
-                            renderInput={(params) => (
-                                <StatTextField {...params} />
-                            )}
-                        />
+                    name="id_category"
+                    defaultValue={transaction.id_category}
+                    render={({ field: { value, onChange } }) => (
+                        <StatFormControl size="small" variant="standard">
+                            <InputLabel id="category">
+                                Назва категорії
+                            </InputLabel>
+                            <Select
+                                labelId="category"
+                                id="category"
+                                value={value}
+                                onChange={onChange}
+                            >
+                                {categories.map((category: ICategory) => {
+                                    return (
+                                        !category.read_only && (
+                                            <MenuItem
+                                                key={category.id}
+                                                value={category.id}
+                                            >
+                                                {category.label.toUpperCase()}
+                                            </MenuItem>
+                                        )
+                                    );
+                                })}
+                                {categories.map((category: ICategory) => {
+                                    return (
+                                        category.read_only && (
+                                            <MenuItem
+                                                key={category.id}
+                                                value={category.id}
+                                            >
+                                                <em>
+                                                    {category.label.toUpperCase()}
+                                                </em>
+                                            </MenuItem>
+                                        )
+                                    );
+                                })}
+                            </Select>
+                        </StatFormControl>
                     )}
                 />
-            </LocalizationProvider>
+                <StatTextField
+                    size="small"
+                    label="Сума транзакції"
+                    variant="standard"
+                    {...register('amount')}
+                    error={errors?.amount ? true : false}
+                    helperText={errors?.amount ? 'Введіть число' : ''}
+                />
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <Controller
+                        control={control}
+                        name="date"
+                        render={({ field: { onChange, value } }) => (
+                            <DatePicker
+                                disableFuture
+                                label="Дата"
+                                openTo="year"
+                                views={['year', 'month', 'day']}
+                                value={value}
+                                onChange={onChange}
+                                renderInput={(params) => (
+                                    <StatTextField {...params} />
+                                )}
+                            />
+                        )}
+                    />
+                </LocalizationProvider>
+            </BoxInput>
             <BoxButton>
                 <Box>
                     <Button

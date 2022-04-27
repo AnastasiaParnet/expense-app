@@ -7,10 +7,10 @@ import React, { useEffect, useState } from 'react';
 import { authSelector } from 'store/reducers/AuthSlice';
 import { categorySelector } from 'store/reducers/CategorySlice';
 import {
-    fetchTransactionsByPage,
+    fetchTransactions,
     transactionSelector,
 } from 'store/reducers/TransactionSlice';
-import BoxMessageTransactions from './BoxMessageTransactions';
+import BoxMessageTransactions from './Box/BoxMessageTransactions';
 
 const BoxList = styled(Box)({
     overflow: 'auto',
@@ -34,7 +34,7 @@ const ListTransactions: React.FC = () => {
     useEffect(() => {
         if (idUser) {
             dispatch(
-                fetchTransactionsByPage({
+                fetchTransactions({
                     idUser,
                     pageParams,
                 })

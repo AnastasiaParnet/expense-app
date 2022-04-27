@@ -5,6 +5,7 @@ import {
     PayloadAction,
 } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { dateNow } from 'hooks/date';
 import { AppDispatch, RootState } from 'store/store';
 import { v4 as uuidv4 } from 'uuid';
 import { ITransaction } from '../../models/ITransaction';
@@ -13,7 +14,22 @@ interface IPageParams {
     page: number;
     limit: number;
     search: string;
+    sort: SORT_TRANSACTION;
+    orderSort: ORDER_SORT;
+    dateStart: string | null;
+    dateEnd: string | null;
     arrayIdActualCategories: string[];
+}
+
+enum SORT_TRANSACTION {
+    Label = 'label',
+    Date = 'date',
+    Amount = 'amount',
+}
+
+enum ORDER_SORT {
+    Asc = 'asc',
+    Desc = 'desc',
 }
 
 interface TransactionState {
@@ -25,39 +41,6 @@ interface TransactionState {
 }
 
 const fetchTransactions = createAsyncThunk(
-    'transaction/fetch',
-    async (
-        {
-            idUser,
-            pageParams,
-        }: {
-            idUser: string;
-            pageParams: IPageParams;
-        },
-        thunkAPI
-    ) => {
-        try {
-            const response = await axios.get<ITransaction[]>(
-                `http://localhost:8000/transactions`,
-                {
-                    params: {
-                        id_user: idUser,
-                        id_category: pageParams.arrayIdActualCategories,
-                        _sort: 'date',
-                        _order: 'asc',
-                    },
-                }
-            );
-            return response.data;
-        } catch (e) {
-            return thunkAPI.rejectWithValue(
-                'Не вдалося ініціалізувати транзакції'
-            );
-        }
-    }
-);
-
-const fetchTransactionsByPage = createAsyncThunk(
     'transaction/fetchByPage',
     async (
         {
@@ -79,12 +62,13 @@ const fetchTransactionsByPage = createAsyncThunk(
                         label_like: pageParams.search,
                         _page: pageParams.page,
                         _limit: pageParams.limit,
-                        _sort: 'date',
-                        _order: 'desc',
+                        _sort: pageParams.sort,
+                        date_gte: pageParams.dateStart,
+                        date_lte: pageParams.dateEnd,
+                        _order: pageParams.orderSort,
                     },
                 }
             );
-            console.log('fetch');
             return {
                 transactions: response.data,
                 totalTransactions: response.headers['x-total-count'],
@@ -113,11 +97,10 @@ const addTransaction =
     }) =>
     async (dispatch: AppDispatch) => {
         try {
-            const date = new Date(new Date().setHours(0, 0, 0, 0));
             const newTransaction: ITransaction = {
                 id: uuidv4(),
                 label,
-                date,
+                date: dateNow(),
                 amount,
                 id_category: idCategory,
                 id_user: idUser,
@@ -126,7 +109,7 @@ const addTransaction =
                 `http://localhost:8000/transactions`,
                 newTransaction
             );
-            dispatch(fetchTransactionsByPage({ idUser, pageParams }));
+            dispatch(fetchTransactions({ idUser, pageParams }));
         } catch (e) {
             console.error(e);
             dispatch(
@@ -151,7 +134,6 @@ const changeCategoryForTransactions =
     }) =>
     async (dispatch: AppDispatch) => {
         try {
-            console.log('tran1');
             const response = await axios.get<ITransaction[]>(
                 'http://localhost:8000/transactions',
                 {
@@ -169,16 +151,7 @@ const changeCategoryForTransactions =
                     }
                 );
             }
-            await axios.get<ITransaction[]>(
-                'http://localhost:8000/transactions',
-                {
-                    params: {
-                        id_user: idUser,
-                    },
-                }
-            );
-            console.log('tran2');
-            dispatch(fetchTransactionsByPage({ idUser, pageParams }));
+            dispatch(fetchTransactions({ idUser, pageParams }));
         } catch (e) {
             console.error(e);
             dispatch(
@@ -207,7 +180,7 @@ const changeTransaction =
                     ...newDataTransaction,
                 }
             );
-            dispatch(fetchTransactionsByPage({ idUser, pageParams }));
+            dispatch(fetchTransactions({ idUser, pageParams }));
         } catch (e) {
             console.error(e);
             dispatch(
@@ -233,7 +206,7 @@ const deleteTransaction =
             await axios.delete<ITransaction>(
                 `http://localhost:8000/transactions/${idTransaction}`
             );
-            dispatch(fetchTransactionsByPage({ idUser, pageParams }));
+            dispatch(fetchTransactions({ idUser, pageParams }));
         } catch (e) {
             console.error(e);
             dispatch(
@@ -262,6 +235,10 @@ const initialState: TransactionState = {
         page: 1,
         limit: 3,
         search: '',
+        sort: SORT_TRANSACTION.Date,
+        orderSort: ORDER_SORT.Desc,
+        dateStart: '',
+        dateEnd: '',
         arrayIdActualCategories: [],
     },
 };
@@ -281,35 +258,14 @@ const transactionSlice = createSlice({
         },
     },
     extraReducers: {
-        [fetchTransactionsByPage.pending.type]: (state) => {
-            state.transactions = [];
-            state.isLoading = true;
-            state.error = '';
-        },
-        [fetchTransactionsByPage.fulfilled.type]: (state, action) => {
-            state.transactions = action.payload.transactions;
-            state.totalTransactions = action.payload.totalTransactions;
-            state.isLoading = false;
-            state.error = '';
-        },
-        [fetchTransactionsByPage.rejected.type]: (
-            state,
-            action: PayloadAction<string>
-        ) => {
-            state.transactions = [];
-            state.isLoading = false;
-            state.error = action.payload;
-        },
         [fetchTransactions.pending.type]: (state) => {
             state.transactions = [];
             state.isLoading = true;
             state.error = '';
         },
-        [fetchTransactions.fulfilled.type]: (
-            state,
-            action: PayloadAction<ITransaction[]>
-        ) => {
-            state.transactions = action.payload;
+        [fetchTransactions.fulfilled.type]: (state, action) => {
+            state.transactions = action.payload.transactions;
+            state.totalTransactions = action.payload.totalTransactions;
             state.isLoading = false;
             state.error = '';
         },
@@ -332,10 +288,11 @@ const transactionSelector = createDraftSafeSelector(rootState, (state) => {
 export default transactionSlice.reducer;
 export {
     type IPageParams,
+    SORT_TRANSACTION,
+    ORDER_SORT,
     transactionSlice,
     transactionSelector,
     fetchTransactions,
-    fetchTransactionsByPage,
     addTransaction,
     changeCategoryForTransactions,
     changeTransaction,

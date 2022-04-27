@@ -9,6 +9,10 @@ const theme = createTheme({
             main: 'rgb(125, 100, 110)',
         },
     },
+    typography: {
+        h1: { fontFamily: 'Arial, Helvetica, sans-serif' },
+        span: { fontFamily: 'Arial, Helvetica, sans-serif' },
+    },
     components: {
         MuiToggleButton: {
             styleOverrides: {
@@ -23,6 +27,22 @@ const theme = createTheme({
             styleOverrides: {
                 root: {
                     padding: '2%',
+                },
+            },
+        },
+        MuiTypography: {
+            styleOverrides: {
+                fontFamily: 'Arial, Helvetica, sans-serif',
+                h1: {
+                    fontSize: '20px',
+                    color: 'rgb(0, 0, 0, 0.6)',
+                },
+                name_transaction: {
+                    fontFamily: 'Arial, Helvetica, sans-serif',
+                    fontSize: '18px',
+                },
+                label_transaction: {
+                    fontFamily: 'Arial, Helvetica, sans-serif',
                 },
             },
         },

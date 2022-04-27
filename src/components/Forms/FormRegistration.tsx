@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, Typography } from '@mui/material';
 import { Box, styled } from '@mui/system';
 import axios from 'axios';
 import { useAppDispatch, useAppSelector } from 'hooks/redux';
@@ -13,26 +13,34 @@ import * as yup from 'yup';
 interface InterfaceRegistration {
     username: string;
     password: string;
+    confirmPassword: string;
 }
 
 const Form = styled('form')({
     display: 'inline-block',
-    padding: '25px 10%',
-    border: '1px solid rgb(52, 35, 42)',
     textAlign: 'center',
 });
 
-const Title = styled('h1')({
-    margin: 0,
+const BoxInput = styled(Box)({
+    padding: '0 0 15px 0',
+    width: '260px',
 });
 
-const BoxInput = styled(Box)({
-    padding: '7px',
+const BoxButton = styled(Box)({
+    padding: '5px',
 });
 
 const validationSchema = yup.object({
     username: yup.string().required("Введіть ім'я користувача"),
-    password: yup.string().min(4).max(16).required('Введіть пароль'),
+    password: yup
+        .string()
+        .min(4, 'Менше 4-ох символів')
+        .max(16, 'Більше 16-ти символів')
+        .required('Введіть пароль'),
+    confirmPassword: yup
+        .string()
+        .oneOf([yup.ref('password'), null], 'Паролі не співпадають')
+        .required('Введіть повторно пароль'),
 });
 
 const FormRegistration = () => {
@@ -42,8 +50,7 @@ const FormRegistration = () => {
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitted },
-        getValues,
+        formState: { errors },
     } = useForm<InterfaceRegistration>({
         mode: 'onChange',
         resolver: yupResolver(validationSchema),
@@ -72,11 +79,12 @@ const FormRegistration = () => {
 
     return (
         <Form>
-            <Title>Реєстрація</Title>
+            <Typography variant="h1">Реєстрація</Typography>
             <BoxInput>
                 <TextField
+                    fullWidth
                     label="Ім'я користувача"
-                    variant="filled"
+                    variant="standard"
                     {...register('username')}
                     error={errors?.username ? true : false}
                     helperText={
@@ -88,9 +96,10 @@ const FormRegistration = () => {
             </BoxInput>
             <BoxInput>
                 <TextField
+                    fullWidth
                     label="Пароль"
                     type="password"
-                    variant="filled"
+                    variant="standard"
                     {...register('password')}
                     error={errors?.password ? true : false}
                     helperText={
@@ -101,16 +110,31 @@ const FormRegistration = () => {
                 />
             </BoxInput>
             <BoxInput>
+                <TextField
+                    fullWidth
+                    label="Повторне введення паролю"
+                    type="password"
+                    variant="standard"
+                    {...register('confirmPassword')}
+                    error={errors?.confirmPassword ? true : false}
+                    helperText={
+                        errors?.confirmPassword
+                            ? errors.confirmPassword.message || 'Error!!!'
+                            : ''
+                    }
+                />
+            </BoxInput>
+            <BoxButton>
                 <Button
                     variant="contained"
                     onClick={handleSubmit(clickRegistration)}
                 >
                     Зареєструватись
                 </Button>
-            </BoxInput>
-            <BoxInput>
+            </BoxButton>
+            <BoxButton>
                 <Button onClick={redirectToLogIn}>Повернутись назад</Button>
-            </BoxInput>
+            </BoxButton>
         </Form>
     );
 };
