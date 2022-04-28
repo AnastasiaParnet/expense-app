@@ -5,7 +5,7 @@ import { useAppSelector } from 'hooks/redux';
 import React from 'react';
 import { transactionSelector } from 'store/reducers/TransactionSlice';
 
-const BoxMessageTransactions = () => {
+const BoxMessageTransactions: React.FC = () => {
     const { isLoading, error, transactions } =
         useAppSelector(transactionSelector);
     return (

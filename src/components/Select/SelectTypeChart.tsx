@@ -1,4 +1,10 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import {
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+} from '@mui/material';
 import { TYPE_CHART } from 'components/Box/BoxGraphic';
 import React from 'react';
 
@@ -11,8 +17,8 @@ const SelectTypeChart: React.FC<SelectTypeChartProps> = ({
     typeChart,
     setTypeChart,
 }) => {
-    const changeTypeChart = (e: any) => {
-        setTypeChart(e.target.value);
+    const changeTypeChart = (e: SelectChangeEvent<unknown>) => {
+        setTypeChart(e.target.value as TYPE_CHART);
     };
 
     return (

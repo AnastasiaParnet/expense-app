@@ -11,7 +11,7 @@ const BoxRegistration = styled(Box)({
     textAlign: 'center',
 });
 
-const Registration = () => {
+const Registration: React.FC = () => {
     return (
         <BoxRegistration>
             <FormRegistration />

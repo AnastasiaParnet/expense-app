@@ -77,7 +77,7 @@ const ListCategories: React.FC<ListCategoriesProps> = ({
                         Категорії
                     </StatToggleButton>
                     <StatMenu
-                        id="menu-appbar"
+                        id="menu"
                         anchorEl={anchorElNav}
                         open={Boolean(anchorElNav)}
                         onClose={handleCloseNavMenu}

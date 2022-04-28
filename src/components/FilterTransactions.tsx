@@ -60,7 +60,7 @@ const FilterTransactions = () => {
     const [dateStart, setDateStart] = useState<Date | null>(null);
     const [dateEnd, setDateEnd] = useState<Date | null>(null);
     const [typeSort, setTypeSort] = useState<ITypeSort>(dataForSort[0]);
-    const [limit, setLimit] = useState<number>(pageParams.limit);
+    const [limit, setLimit] = useState<number>(3);
 
     useEffect(() => {
         let dateStartString = null,

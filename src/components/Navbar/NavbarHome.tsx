@@ -92,7 +92,7 @@ const pages = [
     { name: 'Статистика', link: GRAPHICS_SCREEN },
 ];
 
-const NavbarHome = () => {
+const NavbarHome: React.FC = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const location = useLocation();

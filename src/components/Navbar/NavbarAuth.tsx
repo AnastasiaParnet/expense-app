@@ -1,7 +1,7 @@
 import Typography from '@mui/material/Typography';
 import React from 'react';
 
-const NavbarAuth = () => {
+const NavbarAuth: React.FC = () => {
     return (
         <Typography variant="h6" noWrap component="div" sx={{ mr: 2 }}>
             МОЇ ФІНАНСИ

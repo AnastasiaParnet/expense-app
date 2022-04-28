@@ -37,10 +37,10 @@ const BoxSelect = styled(Box)({
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     gridColumnGap: '10px',
-    margin: '0 0 10px 20px',
+    margin: '0 10% 10px 20px',
 });
 
-const BoxGraphic = () => {
+const BoxGraphic: React.FC = () => {
     const dataForSort: ITypeSort[] = [
         {
             name: 'Від старої до нової дати',
@@ -100,10 +100,8 @@ const BoxGraphic = () => {
         []
     );
 
-    if (dataForGraphic.length == 0) return <></>;
-
     return (
-        <BoxChart>
+        <>
             <BoxSelect>
                 <SelectTypeChart
                     typeChart={typeChart}
@@ -115,17 +113,20 @@ const BoxGraphic = () => {
                     setTypeSort={setTypeSort}
                 />
             </BoxSelect>
-            {dataForGraphic.length > 0 &&
-                ((typeChart == TYPE_CHART.Line && (
-                    <LineGraph data={dataForGraphic} />
-                )) ||
-                    (typeChart == TYPE_CHART.Bar && (
-                        <BarGraph data={dataForGraphic} />
+            {dataForGraphic.length > 0 && (
+                <BoxChart>
+                    {(typeChart == TYPE_CHART.Line && (
+                        <LineGraph data={dataForGraphic} />
                     )) ||
-                    (typeChart == TYPE_CHART.Radar && (
-                        <RadarGraph data={dataForGraphic} />
-                    )))}
-        </BoxChart>
+                        (typeChart == TYPE_CHART.Bar && (
+                            <BarGraph data={dataForGraphic} />
+                        )) ||
+                        (typeChart == TYPE_CHART.Radar && (
+                            <RadarGraph data={dataForGraphic} />
+                        ))}
+                </BoxChart>
+            )}
+        </>
     );
 };
 

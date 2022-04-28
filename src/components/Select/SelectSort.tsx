@@ -1,4 +1,10 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import {
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+} from '@mui/material';
 import React from 'react';
 import { ORDER_SORT, SORT_TRANSACTION } from 'store/reducers/TransactionSlice';
 
@@ -19,8 +25,10 @@ const SelectSort: React.FC<SelectSortProps> = ({
     typeSort,
     setTypeSort,
 }) => {
-    const changeTypeSort = (e: any) => {
-        const type = arrayTypeSort.find((type) => type.name == e.target.value);
+    const changeTypeSort = (e: SelectChangeEvent<unknown>) => {
+        const type = arrayTypeSort.find(
+            (type) => type.name == (e.target.value as string)
+        );
         if (type) setTypeSort(type);
     };
 

@@ -4,7 +4,7 @@ import FormAddCategory from 'components/Forms/FormAddCategory';
 import ListCategories from 'components/ListCategories';
 import React from 'react';
 
-interface BaseBoxProps {
+interface BaseBoxHomePageProps {
     isChangeCategory: boolean;
 }
 
@@ -31,7 +31,10 @@ const BoxMain = styled(Box)(({ theme }) => ({
     },
 }));
 
-const BaseBox: React.FC<BaseBoxProps> = ({ children, isChangeCategory }) => {
+const BaseBoxHomePage: React.FC<BaseBoxHomePageProps> = ({
+    children,
+    isChangeCategory,
+}) => {
     return (
         <BoxMain>
             <Box>
@@ -43,4 +46,4 @@ const BaseBox: React.FC<BaseBoxProps> = ({ children, isChangeCategory }) => {
     );
 };
 
-export default BaseBox;
+export default BaseBoxHomePage;

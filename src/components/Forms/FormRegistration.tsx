@@ -43,7 +43,7 @@ const validationSchema = yup.object({
         .required('Введіть повторно пароль'),
 });
 
-const FormRegistration = () => {
+const FormRegistration: React.FC = () => {
     const dispatch = useAppDispatch();
     const { idUser } = useAppSelector(authSelector);
     const navigate = useNavigate();

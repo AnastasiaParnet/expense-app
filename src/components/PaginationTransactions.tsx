@@ -12,7 +12,7 @@ const StatPagination = styled(Pagination)({
     justifyContent: 'center',
 });
 
-const PaginationTransactions = () => {
+const PaginationTransactions: React.FC = () => {
     const dispatch = useAppDispatch();
     const [countPages, setCountPages] = useState<number>(1);
     const { totalTransactions, pageParams } =
@@ -20,7 +20,9 @@ const PaginationTransactions = () => {
 
     useEffect(() => {
         const newCountPages = Math.ceil(totalTransactions / pageParams.limit);
-        if (newCountPages < pageParams.page)
+        if (newCountPages == 0)
+            dispatch(changePageParams({ ...pageParams, page: 1 }));
+        else if (newCountPages < pageParams.page)
             dispatch(changePageParams({ ...pageParams, page: newCountPages }));
         setCountPages(newCountPages);
     }, [dispatch, pageParams.limit, totalTransactions]);

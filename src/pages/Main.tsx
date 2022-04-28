@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import styled from '@mui/system/styled';
-import BaseBox from 'components/Box/BaseBoxPage';
+import BaseBox from 'components/Box/BaseBoxHomePage';
 import FilterTransactions from 'components/FilterTransactions';
 import FormAddTransaction from 'components/Forms/FormAddTransaction';
 import ListTransactions from 'components/ListTransactions';

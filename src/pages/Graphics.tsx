@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import styled from '@mui/system/styled';
-import BaseBox from 'components/Box/BaseBoxPage';
+import BaseBox from 'components/Box/BaseBoxHomePage';
 import BoxGraphic from 'components/Box/BoxGraphic';
 import BoxMessageTransactions from 'components/Box/BoxMessageTransactions';
 import React from 'react';
@@ -15,8 +15,8 @@ const Graphics: React.FC = () => {
     return (
         <BaseBox isChangeCategory={false}>
             <BoxChart>
-                <BoxMessageTransactions />
                 <BoxGraphic />
+                <BoxMessageTransactions />
             </BoxChart>
         </BaseBox>
     );
